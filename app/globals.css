@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .themeBgColor {
+    @apply bg-gradient-to-r from-[#00524e] to-[#07453d];
+  }
+  .hoverBgColor {
+    @apply hover:bg-gradient-to-r hover:from-[#0f6761] hover:to-[#206f65];
+  }
+  .textColor {
+    @apply text-[#3c8f83];
+  }
+  .hoverTextColor {
+    @apply hover:text-[#00dabd];
+  }
+  .headingColor {
+    @apply text-3xl text-center mb-4 textColor font-bold;
+  }
+  .headingBorderColor {
+    @apply block w-14 h-[2px] themeBgColor mx-auto mb-8;
+  }
+  .hoverBorderColor {
+    @apply hover:border-[#00dac8];
+  }
+}

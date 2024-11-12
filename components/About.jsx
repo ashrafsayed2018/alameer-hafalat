@@ -1,6 +1,6 @@
-import { AboutCompany } from '../app/data'
 import Image from 'next/image'
 import React from 'react'
+import { AboutCompany } from '../app/data'
 
 function About() {
   return (
@@ -9,11 +9,11 @@ function About() {
       <span className="headingBorderColor"></span>
 
       <p className="text-center text-xl textColor font-bold">
-        شركة نقل اثاث بجدة
+        شركة الأمير للحفلات لتأجير مستلزمات المناسبات بالكويت{' '}
       </p>
       <div className="images w-full md:w-1/3 mx-auto">
         <Image
-          src="/images/about.png"
+          src="/images/012.jpeg"
           alt="about"
           width={300}
           height={200}

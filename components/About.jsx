@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
-import { AboutCompany } from '../app/data'
+import { AboutCompany, SiteInfo } from '../app/data'
 
 function About() {
   return (
@@ -8,8 +8,8 @@ function About() {
       <h2 className="headingColor">حول شركتنا</h2>
       <span className="headingBorderColor"></span>
 
-      <p className="text-center text-xl textColor font-bold">
-        شركة الأمير للحفلات لتأجير مستلزمات المناسبات بالكويت{' '}
+      <p className="text-center text-xl textColor font-bold mb-10">
+        {SiteInfo.title}{' '}
       </p>
       <div className="images w-full md:w-1/3 mx-auto">
         <Image

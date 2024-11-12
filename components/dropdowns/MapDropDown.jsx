@@ -1,10 +1,10 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import Close from '../buttons/Close'
 import { useContext } from 'react'
-import { AppContext } from '../../context'
 import { MapShareLinks } from '../../app/data'
+import { AppContext } from '../../context'
+import Close from '../buttons/Close'
 
 function MapDropDown() {
   const { mapDropIsOpen, setMapDropIsOpen } = useContext(AppContext)
@@ -33,7 +33,7 @@ function MapDropDown() {
             color="white"
             className="h-14 w-14 "
           />
-          <h1 className="text-5xl text-white"> جدة السعودية</h1>
+          <h1 className="text-5xl text-white"> موقعنا بالكويت</h1>
         </Link>
         <ul className="flex items-center gap-8 pt-[15px] mt-4">
           {MapShareLinks.map((link) => {

@@ -6,7 +6,6 @@ import Map from '../components/Map'
 import Services from '../components/Services'
 import Videos from '../components/Videos'
 
-
 export default function Home() {
   return (
     <>
@@ -16,7 +15,6 @@ export default function Home() {
         <About />
         <Videos />
         <Gallery />
-        {/* <Blog /> */}
         <Contact />
         <Map />
       </div>

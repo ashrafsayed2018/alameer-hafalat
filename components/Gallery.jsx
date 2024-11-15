@@ -1,7 +1,8 @@
 import Image from 'next/image'
+import { ServicesList } from '../app/data'
 
 const images = Array.from(
-  { length: 13 },
+  { length: ServicesList.length },
   (_, i) => `/images/${String(i + 1).padStart(3, '0')}.jpeg`
 )
 

@@ -53,7 +53,7 @@ function Navbar() {
         <div className="logo absolute top-[10px] left-1/2 -translate-x-1/2 md:static md:left-0 md:-translate-x-0  flex items-center gap-x-3 col-span-1 ">
           <div className="image flex themeBgColor hoverBgColor w-10 h-10 items-center justify-center rounded-full cursor-pointer">
             <Image
-              src="/images/herog.jpg"
+              src="/images/logo.png"
               alt="logo"
               width={22}
               height={22}

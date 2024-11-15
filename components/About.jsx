@@ -13,7 +13,7 @@ function About() {
       </p>
       <div className="images w-full md:w-1/3 mx-auto">
         <Image
-          src="/images/012.jpeg"
+          src="/images/logo.png"
           alt="about"
           width={300}
           height={200}

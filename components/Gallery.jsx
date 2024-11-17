@@ -12,20 +12,22 @@ export default function Gallery() {
       <h2 className="headingColor">صور من اعمالنا</h2>
       <span className="headingBorderColor"></span>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {images.map((src, index) => (
-          <div
-            key={index}
-            className="relative h-[600px] overflow-hidden rounded-lg shadow-lg transform transition duration-300 ease-in-out hover:rotate-3 hover:shadow-xl"
-          >
-            <Image
-              src={src}
-              alt={`Image ${index + 1}`}
-              layout="fill" // Fills the entire parent container
-              objectFit="cover" // Ensures the image covers the container
-              className="transition duration-300 transform hover:scale-110"
-            />
-          </div>
-        ))}
+        {ServicesList.map((service, index) => {
+          return (
+            <div
+              key={index}
+              className="relative h-[600px] overflow-hidden rounded-lg shadow-lg transform transition duration-300 ease-in-out hover:rotate-3 hover:shadow-xl"
+            >
+              <Image
+                src={service.image}
+                alt={`Image ${index + 1}`}
+                layout="fill" // Fills the entire parent container
+                objectFit="cover" // Ensures the image covers the container
+                className="transition duration-300 transform hover:scale-110"
+              />
+            </div>
+          )
+        })}
       </div>
     </div>
   )

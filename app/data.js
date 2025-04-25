@@ -468,7 +468,7 @@ export const SocialShareLinks = [
   {
     id: 3,
     title: 'Instagram',
-    url: 'https://www.instagram.com/',
+    url: 'https://www.instagram.com/afrah_alamyr122/?igshid=NGExMmI2YTkyZg%3D%3D',
     icon: faInstagram,
   },
   {

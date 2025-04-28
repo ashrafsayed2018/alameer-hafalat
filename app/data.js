@@ -44,6 +44,7 @@ export const SiteInfo = {
   heroImage: '/images/hero.webp',
   mobileNumber: '96650623',
   whatsappNumber: '96596650623',
+  instagramUrl:  'https://www.instagram.com/afrah_alamyr122/?igshid=NGExMmI2YTkyZg%3D%3D',
 }
 
 // export const ServicesList = [

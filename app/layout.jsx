@@ -6,6 +6,7 @@ import { AppProvider } from '../context'
 import { SiteInfo } from './data'
 import './globals.css'
 import Loading from './loading'
+import FloatingContact from '../components/FloatingContact'
 
 // Dynamically import Navbar, Footer, and dropdowns
 const Navbar = dynamic(() => import('../components/Navbar'), { suspense: true })
@@ -60,7 +61,8 @@ export default function RootLayout({ children }) {
             <main className="min-h-screen">{children}</main>
             <Footer />
             <FixedCall />
-            <FixedMobileCall />
+            {/* <FixedMobileCall /> */}
+            <FloatingContact />
           </Suspense>
         </AppProvider>
       </body>

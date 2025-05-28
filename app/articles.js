@@ -616,7 +616,7 @@ export const articles = [
   </section>
 
   </div>`,
-    image: '/images/نابيلون.webp',
+    image: '/images/003.jpeg',
     created_at: '2025-01-02',
   },
   {
@@ -3650,7 +3650,7 @@ export const articles = [
     </section>
 </div>
 `,
-    image: `/images/013.jpeg`,
+    image: `/images/003.jpeg`,
     created_at: `03-02-2025`,
   },
   {
@@ -3736,7 +3736,7 @@ export const articles = [
     </section>
 </div>
 `,
-    image: `/images/013.jpeg`,
+    image: `/images/003.jpeg`,
     created_at: `05-02-2025`,
   },
   {
@@ -3799,7 +3799,7 @@ export const articles = [
         <p class="mb-4">توفر شركات تأجير الخيام في الأحمدي مجموعة متنوعة من الخيام الفاخرة بتصاميم راقية تناسب جميع المناسبات...</p>
     </section>
 </div>`,
-    image: '/images/013.jpeg',
+    image: '/images/003.jpeg',
     created_at: '08-02-2025',
   },
   {
@@ -3863,7 +3863,7 @@ export const articles = [
     </section>
 </div>
 `,
-    image: '/images/013.jpeg',
+    image: '/images/003.jpeg',
     created_at: '11-02-2025',
   },
   {

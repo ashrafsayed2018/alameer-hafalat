@@ -24,7 +24,7 @@ export default async function ArticlePage({ params }) {
       <div className='mt-40'>
         <div className='md:flex items-start justify-around gap-6'>
           <h1 className='text-3xl font-bold text-center mb-8'>
-            {article.title}
+            {article.id >= 66 ? `${article.title} - 96650623` : article.title}
           </h1>
           <div className='flex items-center gap-4 justify-center'>
             <p className='text-sm text-gray-500'>{article.created_at}</p>
@@ -82,10 +82,10 @@ export async function generateMetadata({ params }) {
     }
 
     return {
-      title: article.title,
+      title: article.id >= 66 ? `${article.title} - 96650623` : article.title,
       description: article.excerpt || 'Read more about this topic.',
       openGraph: {
-        title: article.title,
+        title: article.id >= 66 ? `${article.title} - 96650623` : article.title,
         description: article.excerpt || 'Read more about this topic.',
         images: [
           {

@@ -4835,11 +4835,12 @@ export const articles = [
     created_at: '2025-11-20',
   },
   {
-  "id": 70,
-  "title": "تأجير كراسي VIP مخمل + مخمل فضي في الكويت – راحة وأناقة لكبار الضيوف",
-  "slug": "تأجير-كراسي-vip-مخمل-مخمل-فضي-في-الكويت-راحة-وأناقة-لكبار-الضيوف",
-  "excerpt": "المقدمة",
-  "content": `<section>
+    id: 70,
+    title:
+      'تأجير كراسي VIP مخمل + مخمل فضي في الكويت – راحة وأناقة لكبار الضيوف',
+    slug: 'تأجير-كراسي-vip-مخمل-مخمل-فضي-في-الكويت-راحة-وأناقة-لكبار-الضيوف',
+    excerpt: 'المقدمة',
+    content: `<section>
   <div class='max-w-7xl mx-auto p-6 bg-white shadow-lg'>
 <p>تأجير كراسي VIP مخمل + مخمل فضي في الكويت – راحة وأناقة لكبار الضيوف  
 المقدمة  
@@ -4894,8 +4895,7 @@ export const articles = [
 
 </div>
 </section>`,
-  "image": "/images/46.jpeg",
-  "created_at": "2025-11-21"
-}
-
+    image: '/images/46.jpeg',
+    created_at: '2025-11-21',
+  },
 ]

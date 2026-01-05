@@ -1,40 +1,47 @@
-// app/articles/[slug]/page.jsx
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
-// Server Component to fetch and display the article
+// رقم الهاتف (تعدله من مكان واحد فقط)
+const PHONE = '96650623'
+
+// دالة توليد عنوان SEO
+const getSeoTitle = (article) =>
+  article.id >= 66 ? `${article.title} | ${PHONE}` : article.title
+
+// Server Component
 export default async function ArticlePage({ params }) {
   const { slug } = params
   const decodedSlug = decodeURIComponent(slug)
-  console.log('Decoded slug:', decodedSlug)
 
   try {
-    // Dynamically import the articles.js file to get the articles
+    // تحميل المقالات
     const { articles } = await import('../../articles.js')
 
-    // Find the article with the matching slug
+    // البحث عن المقال
     const article = articles.find((a) => a.slug === decodedSlug)
 
     if (!article) {
-      console.log('Article not found')
-      notFound() // Use Next.js notFound helper for 404
+      notFound()
     }
 
     return (
       <div className='mt-40'>
-        <div className='md:flex items-start justify-around gap-6'>
-          <h1 className='text-3xl font-bold text-center mb-8'>
-            {article.id >= 66 ? `${article.title} - 96650623` : article.title}
+        {/* العنوان والتاريخ */}
+        <div className='md:flex items-start justify-between gap-6 mb-8'>
+          {/* H1 بدون رقم الهاتف (أفضل SEO) */}
+          <h1 className='text-3xl font-bold text-center md:text-right'>
+            {article.title}
           </h1>
-          <div className='flex items-center gap-4 justify-center'>
-            <p className='text-sm text-gray-500'>{article.created_at}</p>
+
+          <div className='flex items-center gap-2 justify-center text-gray-500 text-sm'>
+            <span>{article.created_at}</span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='size-6'
+              className='size-5'
             >
               <path
                 strokeLinecap='round'
@@ -44,28 +51,33 @@ export default async function ArticlePage({ params }) {
             </svg>
           </div>
         </div>
+
+        {/* صورة المقال */}
         <div className='w-full md:w-3/4 mx-auto'>
           <Image
-            src={article.image} // Ensure images are stored in the public folder
+            src={article.image}
             alt={article.title}
             width={800}
             height={600}
+            priority
             className='w-full h-auto object-cover rounded-lg'
           />
         </div>
+
+        {/* محتوى المقال */}
         <div
-          className='mt-8 px-2 md:px-8 text-lg md:text-2xl leading-8'
+          className='mt-8 px-2 md:px-8 text-lg md:text-xl leading-8'
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
       </div>
     )
   } catch (error) {
     console.error('Error loading article:', error)
-    return <div>Article could not be loaded.</div> // Error handling if articles.js fails to load
+    return <div>Article could not be loaded.</div>
   }
 }
 
-// Function to generate metadata dynamically
+// توليد Meta Data (العنصر الأهم لـ Google)
 export async function generateMetadata({ params }) {
   const { slug } = params
   const decodedSlug = decodeURIComponent(slug)
@@ -81,15 +93,17 @@ export async function generateMetadata({ params }) {
       }
     }
 
+    const seoTitle = getSeoTitle(article)
+
     return {
-      title: article.id >= 66 ? `${article.title} - 96650623` : article.title,
-      description: article.excerpt || 'Read more about this topic.',
+      title: seoTitle,
+      description: article.excerpt,
       openGraph: {
-        title: article.id >= 66 ? `${article.title} - 96650623` : article.title,
-        description: article.excerpt || 'Read more about this topic.',
+        title: seoTitle,
+        description: article.excerpt,
         images: [
           {
-            url: article.image, // Ensure this is a full URL or a path to the public folder
+            url: article.image,
             width: 800,
             height: 600,
             alt: article.title,
@@ -98,7 +112,6 @@ export async function generateMetadata({ params }) {
       },
     }
   } catch (error) {
-    console.error('Error generating metadata:', error)
     return {
       title: 'Error',
       description: 'An error occurred while loading the article.',

@@ -5,8 +5,7 @@ import { notFound } from 'next/navigation'
 const PHONE = '96650623'
 
 // دالة توليد عنوان SEO
-const getSeoTitle = (article) =>
-  article.id >= 66 ? `${article.title} | ${PHONE}` : article.title
+const getSeoTitle = (article) => `${article.title} | ${PHONE}`
 
 // Server Component
 export default async function ArticlePage({ params }) {

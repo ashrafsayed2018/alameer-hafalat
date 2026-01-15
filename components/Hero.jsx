@@ -10,7 +10,7 @@ const arefRuqaa = Aref_Ruqaa({ subsets: ['arabic'], weight: '400' })
 function Hero() {
   return (
     <section className={`${arefRuqaa.className}`}>
-      <div className="bg-[url('/images/hero.webp')] h-[550px] lg:h-[800px] bg-no-repeat bg-center  bg-cover  relative">
+      <div className="bg-[url('/images/hero1.webp')] h-[550px] lg:h-[800px] bg-no-repeat bg-center  bg-cover  relative">
         <div className="absolute inset-0 bg-black opacity-60"></div>
         <div className="site-description absolute inset-0 z-10 w-4/5 mx-auto h-full py-16 text-center ">
           <h1

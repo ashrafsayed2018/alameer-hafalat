@@ -10,9 +10,9 @@ export default function Home() {
   return (
     <main className='font-sans' dir='rtl'>
       {/* Hero Section */}
-      <section className='relative h-[600px] w-full'>
+      <section className='relative h-[700px] w-full bg-black'>
         <Image
-          src='/images/hero.webp'
+          src='/images/hero1.webp'
           alt='Hero Background'
           fill
           className='object-cover'

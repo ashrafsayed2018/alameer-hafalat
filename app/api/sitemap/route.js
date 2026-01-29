@@ -8,6 +8,7 @@ function generateSiteMap(articles) {
     { loc: 'https://alameer-hafalat.com/services', priority: 0.8 },
     { loc: 'https://alameer-hafalat.com/about', priority: 0.8 },
     { loc: 'https://alameer-hafalat.com/gallery', priority: 0.8 },
+    { loc: 'https://alameer-hafalat.com/blog', priority: 0.8 },
     { loc: 'https://alameer-hafalat.com/contact', priority: 0.8 },
   ]
 

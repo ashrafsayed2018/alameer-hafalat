@@ -24,11 +24,13 @@ function generateSiteMap(articles) {
     .join('')
 
   const dynamicEntries = articles
-    .map(({ slug }) => {
+    .map(({ slug, created_at }) => {
       return `
         <url>
           <loc>https://alameer-hafalat.com/articles/${slug}</loc>
-          <lastmod>${new Date().toISOString()}</lastmod>
+          <lastmod>${
+            created_at ? created_at.split('T')[0] : new Date().toISOString()
+          }</lastmod>
           <priority>0.6</priority>
         </url>`
     })

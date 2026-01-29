@@ -34,6 +34,11 @@ export const NavLinks = [
     name: 'الاتصال',
     url: '/contact',
   },
+  {
+    id: 6,
+    name: 'المدونة',
+    url: '/blog',
+  },
 ]
 export const SiteInfo = {
   title: 'شركة الأمير للحفلات لتأجير مستلزمات المناسبات بالكويت',

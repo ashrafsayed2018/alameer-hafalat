@@ -8,6 +8,11 @@ function Footer() {
     <div className="bg-gray-950 h-[250px] md:h-[200px] flex items-center justify-between px-20 py-10 lg:py-0 flex-col lg:flex-row pb-20 md:pb-0">
       <div className="copy-rights">
         <p className="text-white text-center">© 2024.جميع الحقوق محفوظة.</p>
+        <div className="flex justify-center mt-2">
+          <Link href="/blog" className="text-white hover:text-gray-300">
+            المدونة
+          </Link>
+        </div>
       </div>
 
       <div className="social-icons">

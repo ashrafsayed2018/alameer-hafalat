@@ -33,7 +33,9 @@ export default async function ArticlePage({ params }) {
           </h1>
 
           <div className='flex items-center gap-2 justify-center text-gray-500 text-sm'>
-            <span>{article.created_at}</span>
+            <span>
+              {article.created_at ? article.created_at.split('T')[0] : ''}
+            </span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'

@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic' // Ensures it's always dynamic
 
 import { articles } from '../../articles.js'
+import { tags } from '../../tags.js'
 
 function generateSiteMap(articles) {
   const staticUrls = [
@@ -36,12 +37,25 @@ function generateSiteMap(articles) {
     })
     .join('')
 
+  const tagEntries = tags
+    .map(({ slug }) => {
+      return `
+        <url>
+          <loc>https://alameer-hafalat.com/tags/${slug}</loc>
+          <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+          <priority>0.7</priority>
+        </url>`
+    })
+    .join('')
+
   return `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <!-- Static URLs -->
       ${staticEntries}
-      <!-- Dynamic URLs -->
+      <!-- Dynamic URLs (Articles) -->
       ${dynamicEntries}
+      <!-- Dynamic URLs (Tags) -->
+      ${tagEntries}
     </urlset>`
 }
 

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ServicesList, SiteInfo } from './data'
+import { tags } from './tags'
 
 export default function Home() {
   return (
@@ -150,6 +151,29 @@ export default function Home() {
           بالتفاصيل. خدمة 24 ساعة لجميع مناطق الكويت.
         </p>
       </section>
+      {/* Hashtags Section */}
+      <section className='py-16 bg-white px-4 md:px-12'>
+        <h2 className='text-center text-3xl md:text-4xl font-bold text-[#00524e] mb-12 relative'>
+          تصفح حسب القسم
+          <span className='block w-24 h-1 bg-amber-500 mx-auto mt-4 rounded-full'></span>
+        </h2>
+        <div className='flex flex-wrap justify-center gap-4 max-w-6xl mx-auto'>
+          {tags.map((tag) => (
+            <Link
+              key={tag.slug}
+              href={`/tags/${tag.slug}`}
+              className='group relative inline-flex items-center justify-center overflow-hidden rounded-full p-0.5 font-bold focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2'
+            >
+              <span className='absolute inset-0 bg-gradient-to-br from-[#00524e] to-amber-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100'></span>
+              <span className='relative flex items-center bg-gray-100 px-6 py-3 rounded-full transition-all duration-300 group-hover:bg-opacity-0 group-hover:text-white text-[#00524e]'>
+                <span className='ml-2'>#</span>
+                {tag.title}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
     </main>
   )
 }

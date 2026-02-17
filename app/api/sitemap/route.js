@@ -4,6 +4,29 @@ import { articles } from '../../articles.js'
 import { tags } from '../../tags.js'
 
 function generateSiteMap(articles) {
+  const toIso = (dateStr) => {
+    if (!dateStr) return new Date().toISOString()
+
+    if (dateStr.includes('T')) {
+      const standard = dateStr.replace(
+        /(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/,
+        '$1-$2-$3T$4:$5:$6.$7Z'
+      )
+      const d = new Date(standard)
+      if (!isNaN(d.getTime())) return d.toISOString()
+
+      const d2 = new Date(dateStr)
+      if (!isNaN(d2.getTime())) return d2.toISOString()
+
+      return new Date().toISOString()
+    }
+
+    const d = new Date(dateStr)
+    if (!isNaN(d.getTime())) return d.toISOString()
+
+    return new Date().toISOString()
+  }
+
   const staticUrls = [
     { loc: 'https://alameer-hafalat.com', priority: 1.0 },
     { loc: 'https://alameer-hafalat.com/services', priority: 0.8 },
@@ -29,9 +52,7 @@ function generateSiteMap(articles) {
       return `
         <url>
           <loc>https://alameer-hafalat.com/articles/${slug}</loc>
-          <lastmod>${
-            created_at ? created_at.split('T')[0] : new Date().toISOString()
-          }</lastmod>
+          <lastmod>${toIso(created_at)}</lastmod>
           <priority>0.6</priority>
         </url>`
     })
@@ -42,7 +63,7 @@ function generateSiteMap(articles) {
       return `
         <url>
           <loc>https://alameer-hafalat.com/tags/${slug}</loc>
-          <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+          <lastmod>${new Date().toISOString()}</lastmod>
           <priority>0.7</priority>
         </url>`
     })

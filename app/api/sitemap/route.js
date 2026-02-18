@@ -47,7 +47,8 @@ function generateSiteMap(articles) {
     })
     .join('')
 
-  const dynamicEntries = articles
+  const dynamicEntries = [...articles]
+    .reverse()
     .map(({ slug, created_at }) => {
       return `
         <url>
@@ -58,7 +59,8 @@ function generateSiteMap(articles) {
     })
     .join('')
 
-  const tagEntries = tags
+  const tagEntries = [...tags]
+    .reverse()
     .map(({ slug }) => {
       return `
         <url>

@@ -91,6 +91,9 @@ export async function generateMetadata({ params }) {
       return {
         title: 'Article Not Found',
         description: 'The article you are looking for does not exist.',
+        alternates: {
+          canonical: `https://alameer-hafalat.com/articles/${decodedSlug}`,
+        },
       }
     }
 
@@ -99,6 +102,9 @@ export async function generateMetadata({ params }) {
     return {
       title: seoTitle,
       description: article.excerpt,
+      alternates: {
+        canonical: `https://alameer-hafalat.com/articles/${decodedSlug}`,
+      },
       openGraph: {
         title: seoTitle,
         description: article.excerpt,

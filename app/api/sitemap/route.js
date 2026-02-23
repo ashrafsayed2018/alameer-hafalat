@@ -7,22 +7,16 @@ function generateSiteMap(articles) {
   const toIso = (dateStr) => {
     if (!dateStr) return new Date().toISOString()
 
-    if (dateStr.includes('T')) {
-      const standard = dateStr.replace(
-        /(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/,
-        '$1-$2-$3T$4:$5:$6.$7Z'
-      )
-      const d = new Date(standard)
-      if (!isNaN(d.getTime())) return d.toISOString()
+    const normalized = dateStr.replace(
+      /(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/,
+      '$1T$2:$3:$4.$5Z'
+    )
 
-      const d2 = new Date(dateStr)
-      if (!isNaN(d2.getTime())) return d2.toISOString()
+    const parsed = new Date(normalized)
+    if (!isNaN(parsed.getTime())) return parsed.toISOString()
 
-      return new Date().toISOString()
-    }
-
-    const d = new Date(dateStr)
-    if (!isNaN(d.getTime())) return d.toISOString()
+    const fallback = new Date(dateStr)
+    if (!isNaN(fallback.getTime())) return fallback.toISOString()
 
     return new Date().toISOString()
   }

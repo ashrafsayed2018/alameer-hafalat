@@ -45,6 +45,15 @@ export const metadata = {
   verification: {
     google: 'DsAEdU_7q6zJlPUhicGtWsCdpwR9OQ39WgkUCft8Wpk',
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
+  },
 }
 
 export default function RootLayout({ children }) {

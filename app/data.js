@@ -56,7 +56,7 @@ export const SiteInfo = {
 export const ServicesList = [
   {
     id: 1,
-    link: '/services/air-conditioner-rental',
+    link: '/services/تأجير-مكيفات',
     title: 'تأجير مكيفات',
     image: '/images/services/تأجير مكيفات/تأجير مكيفات.png',
     description:
@@ -66,7 +66,7 @@ export const ServicesList = [
   },
   {
     id: 2,
-    link: '/services/tent-rental',
+    link: '/services/تأجير-خيام',
     title: 'تأجير خيام',
     image: '/images/services/تأجير خيام/تأجير خيام بالكويت.png',
     description:
@@ -76,7 +76,7 @@ export const ServicesList = [
   },
   {
     id: 3,
-    link: '/services/wedding-setup-rental',
+    link: '/services/تأجير-كراسي-وطاولات',
     title: 'تأجير كراسي وطاولات',
     image:
       '/images/services/تأجير كراسي و طاولات/تأجير كراسي و طاولات خدمة الضيافة_20251225_171335_٠٠٠٠.png',
@@ -87,7 +87,7 @@ export const ServicesList = [
   },
   {
     id: 4,
-    link: '/services/female-hospitality-service',
+    link: '/services/خدمة-ضيافة-نسائي',
     title: 'خدمة ضيافة نسائي',
     image: '/images/services/خدمة ضيافة نسائي/خدمة ضيافة نسائي الكويت.png',
     description:
@@ -97,7 +97,7 @@ export const ServicesList = [
   },
   {
     id: 5,
-    link: '/services/male-hospitality-service',
+    link: '/services/خدمة-ضيافة-رجالى',
     title: 'خدمة ضيافة رجالى',
     image: '/images/services/خدمة ضيافة رجالى/خدمة ضيافة رجالى_.jpeg',
     description:
@@ -107,7 +107,7 @@ export const ServicesList = [
   },
   {
     id: 6,
-    link: '/services/heaters-rental',
+    link: '/services/تأجير-دفايات',
     title: 'تأجير دفايات',
     image: '/images/services/تأجير دفايات/تأجير دفايات الكويت.png',
     description:
@@ -117,7 +117,7 @@ export const ServicesList = [
   },
   {
     id: 7,
-    link: '/services/matrouq-sofa',
+    link: '/services/تأجير-كنب-مطروق',
     title: 'تأجير كنب مطروق',
     image: '/images/services/تاجير كنب مطروق/تأجير كنب مطروق.png',
     description:
@@ -127,7 +127,7 @@ export const ServicesList = [
   },
   {
     id: 8,
-    link: '/services/american-sofa',
+    link: '/services/تأجير-كنب-امريكي',
     title: 'تأجير كنب امريكي',
     image: '/images/services/تأجير كنب امريكى/تاجير كنب امريكى_.png',
     description:
@@ -137,7 +137,7 @@ export const ServicesList = [
   },
   {
     id: 9,
-    link: '/services/valet-parking',
+    link: '/services/خدمة-فالية-باركن',
     title: 'تأجير فاليةاو باركن ',
     image: '/images/services/خدمة فالية باركن/خدمة فالية باركن_.jpeg',
     description:
@@ -147,7 +147,7 @@ export const ServicesList = [
   },
   {
     id: 10,
-    link: '/services/vip-chairs',
+    link: '/services/تأجير-كراسي-vip',
     title: 'تأجير كراسي vip',
     image: '/images/services/تأجير كراسي شفافة/تأجير كراسي شفافة_.png',
     description:
@@ -157,7 +157,7 @@ export const ServicesList = [
   },
   {
     id: 11,
-    link: '/services/funeral-chairs',
+    link: '/services/تأجير-كراسي-عزاء',
     title: 'تأجير كراسي عزاء',
     image: '/images/services/تأجير كراسي عزاء/تأجير كراسي عزاء.png',
     description:
@@ -167,7 +167,7 @@ export const ServicesList = [
   },
   {
     id: 12,
-    link: '/services/decoration-rental',
+    link: '/services/تأجير-زينة-اعراس',
     title: 'تأجير زينة اعراس',
     image: '/images/services/تأجير زينة/تأجير زينة بالكويت.png',
     description:
@@ -177,7 +177,7 @@ export const ServicesList = [
   },
   {
     id: 13,
-    link: '/services/transparent-chairs',
+    link: '/services/تأجير-كراسي-شفافة',
     title: 'تأجير كراسي شفافة',
     image: '/images/services/تأجير كراسي شفافة/تأجير كراسي شفافة_(1).png',
     description:
@@ -187,7 +187,7 @@ export const ServicesList = [
   },
   {
     id: 14,
-    link: '/services/phone-inspection',
+    link: '/services/خدمة-تفتيش-تليفونات',
     title: 'خدمة تفتيش تليفونات',
     image: '/images/services/خدمة تفتيش تليفونات/خدمة تفتيش تليفونات .png',
     description:

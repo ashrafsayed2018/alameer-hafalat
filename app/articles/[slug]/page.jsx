@@ -1,5 +1,7 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { SiteInfo } from '../../data'
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const PHONE = '+96650623'
@@ -48,6 +50,40 @@ const normalizeSlug = (value = '') => {
   } catch {
     return str.normalize('NFC').trim()
   }
+}
+
+const stripHtml = (html = '') =>
+  String(html)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+const estimateReadingTimeMinutes = (html = '') => {
+  const text = stripHtml(html)
+  const words = text ? text.split(' ').length : 0
+  return Math.max(1, Math.round(words / 180))
+}
+
+const parseDate = (dateStr) => {
+  if (!dateStr) return 0
+  if (dateStr.includes('T')) {
+    const standard = dateStr.replace(
+      /(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/,
+      '$1-$2-$3T$4:$5:$6.$7Z'
+    )
+    const ts = Date.parse(standard)
+    if (!isNaN(ts)) return ts
+    return Date.parse(dateStr) || 0
+  }
+  const dmy = dateStr.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  if (dmy) {
+    return new Date(`${dmy[3]}-${dmy[2]}-${dmy[1]}`).getTime()
+  }
+  const ymd = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (ymd) {
+    return new Date(dateStr).getTime()
+  }
+  return 0
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -124,63 +160,208 @@ export default async function ArticlePage({ params }) {
 
   const safeContent = sanitizeHtmlLite(article.content ?? '')
 
-  const publishedDate = article.created_at
-    ? new Date(article.created_at).toLocaleDateString('ar-SA', {
+  const publishedTs = parseDate(article.created_at)
+  const publishedDate = publishedTs
+    ? new Date(publishedTs).toLocaleDateString('ar-SA', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
       })
     : null
 
+  const canonical = toAbsoluteUrl(`/articles/${encodeURIComponent(article.slug)}`)
+  const readingMinutes = estimateReadingTimeMinutes(article.content ?? '')
+  const shareUrl = encodeURIComponent(canonical)
+  const shareTitle = encodeURIComponent(article.title)
+  const whatsappShareUrl = `https://wa.me/?text=${shareTitle}%0A${shareUrl}`
+
+  const relatedArticles = (await getArticles())
+    .filter((a) => a && a.slug && normalizeSlug(a.slug) !== normalizeSlug(article.slug))
+    .sort((a, b) => parseDate(b.created_at) - parseDate(a.created_at))
+    .slice(0, 4)
+
   return (
-    <article className='mt-40'>
-      {/* Header: Title + Date */}
-      <div className='md:flex items-start justify-between gap-6 mb-8'>
-        <h1 className='text-3xl font-bold text-center md:text-right'>
-          {article.title}
-        </h1>
+    <main className='mt-32 mb-20'>
+      <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <nav className='text-sm text-gray-500 flex flex-wrap items-center gap-2'>
+          <Link href='/' className='hover:text-[#00524e] transition-colors'>
+            الرئيسية
+          </Link>
+          <span className='text-gray-300'>/</span>
+          <Link href='/blog' className='hover:text-[#00524e] transition-colors'>
+            المدونة
+          </Link>
+          <span className='text-gray-300'>/</span>
+          <span className='text-gray-700 line-clamp-1'>{article.title}</span>
+        </nav>
 
-        {publishedDate && (
-          <div className='flex items-center gap-2 justify-center text-gray-500 text-sm whitespace-nowrap'>
-            <span>{publishedDate}</span>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='size-5'
-              aria-hidden='true'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-              />
-            </svg>
+        <header className='mt-6 bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden'>
+          <div className='p-6 md:p-10'>
+            <div className='flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500'>
+              {publishedDate ? <span>{publishedDate}</span> : null}
+              <span>•</span>
+              <span>{readingMinutes} دقيقة قراءة</span>
+            </div>
+
+            <h1 className='mt-4 text-3xl md:text-5xl font-extrabold text-[#00524e] leading-tight'>
+              {article.title}
+            </h1>
+
+            {article.excerpt ? (
+              <p className='mt-5 text-lg md:text-xl leading-relaxed text-gray-700'>
+                {article.excerpt}
+              </p>
+            ) : null}
+
+            <div className='mt-6 flex flex-wrap gap-3'>
+              <a
+                href={`tel:${SiteInfo.mobileNumber}`}
+                className='inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold bg-[#00524e] text-white hover:bg-[#003f3c] transition-colors'
+              >
+                اتصل الآن
+              </a>
+              <a
+                href={`https://wa.me/${SiteInfo.whatsappNumber}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors'
+              >
+                واتساب
+              </a>
+              <a
+                href={whatsappShareUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold border border-gray-200 text-gray-700 hover:border-[#00524e] hover:text-[#00524e] transition-colors'
+              >
+                مشاركة المقال
+              </a>
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* Cover Image */}
-      {article.image && (
-        <div className='w-full md:w-3/4 mx-auto'>
-          <Image
-            src={article.image}
-            alt={article.title}
-            width={800}
-            height={600}
-            priority
-            className='w-full h-auto object-cover rounded-lg'
-          />
+          {article.image ? (
+            <div className='relative w-full aspect-[16/9] bg-gray-100'>
+              <Image
+                src={article.image}
+                alt={article.title}
+                fill
+                priority
+                className='object-cover'
+                sizes='(max-width: 1024px) 100vw, 1024px'
+              />
+            </div>
+          ) : null}
+        </header>
+
+        <div className='mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8'>
+          <article className='lg:col-span-8'>
+            <div className='bg-white border border-gray-100 rounded-3xl shadow-sm p-6 md:p-10'>
+              <div
+                className='article-content text-base md:text-lg'
+                dangerouslySetInnerHTML={{ __html: safeContent }}
+              />
+            </div>
+
+            {relatedArticles.length ? (
+              <section className='mt-10'>
+                <h2 className='text-2xl md:text-3xl font-bold text-[#00524e] mb-5'>
+                  مقالات قد تهمك
+                </h2>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+                  {relatedArticles.map((a) => (
+                    <Link
+                      key={a.slug}
+                      href={`/articles/${a.slug}`}
+                      className='group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow'
+                    >
+                      <div className='relative w-full aspect-[16/10] bg-gray-100'>
+                        {a.image ? (
+                          <Image
+                            src={a.image}
+                            alt={a.title}
+                            fill
+                            className='object-cover group-hover:scale-[1.02] transition-transform'
+                            sizes='(max-width: 640px) 100vw, 50vw'
+                          />
+                        ) : null}
+                      </div>
+                      <div className='p-5'>
+                        <p className='text-sm text-gray-400' dir='ltr'>
+                          {a.created_at ? a.created_at.split('T')[0] : ''}
+                        </p>
+                        <h3 className='mt-2 font-bold text-[#00524e] leading-snug line-clamp-2'>
+                          {a.title}
+                        </h3>
+                        {a.excerpt ? (
+                          <p className='mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3'>
+                            {a.excerpt}
+                          </p>
+                        ) : null}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </article>
+
+          <aside className='lg:col-span-4'>
+            <div className='sticky top-28 space-y-6'>
+              <div className='bg-white border border-gray-100 rounded-3xl shadow-sm p-6'>
+                <p className='text-lg font-bold text-[#00524e]'>للحجز والاستفسار</p>
+                <p className='mt-2 text-3xl font-extrabold text-amber-500 dir-ltr text-right'>
+                  {SiteInfo.mobileNumber}
+                </p>
+                <div className='mt-5 grid grid-cols-1 gap-3'>
+                  <a
+                    href={`tel:${SiteInfo.mobileNumber}`}
+                    className='w-full inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold bg-[#00524e] text-white hover:bg-[#003f3c] transition-colors'
+                  >
+                    اتصال
+                  </a>
+                  <a
+                    href={`https://wa.me/${SiteInfo.whatsappNumber}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='w-full inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors'
+                  >
+                    واتساب
+                  </a>
+                </div>
+              </div>
+
+              <div className='rounded-3xl p-6 text-white bg-gradient-to-br from-[#00524e] to-amber-500 shadow-sm'>
+                <p className='text-xl font-extrabold leading-snug'>
+                  جهّز مناسبتك مع خدمات الأمير
+                </p>
+                <p className='mt-3 text-white/90 leading-relaxed'>
+                  تواصل معنا الآن للحصول على عرض سعر سريع وخدمة فورية داخل الكويت.
+                </p>
+                <div className='mt-5'>
+                  <a
+                    href={whatsappShareUrl}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold bg-white text-[#00524e] hover:bg-white/90 transition-colors'
+                  >
+                    مشاركة المقال عبر واتساب
+                  </a>
+                </div>
+              </div>
+
+              <div className='bg-white border border-gray-100 rounded-3xl shadow-sm p-6'>
+                <p className='text-sm text-gray-500'>رابط المقال</p>
+                <a
+                  href={canonical}
+                  className='mt-2 block text-sm text-[#00524e] break-words hover:underline'
+                >
+                  {canonical}
+                </a>
+              </div>
+            </div>
+          </aside>
         </div>
-      )}
-
-      {/* Body */}
-      <div
-        className='mt-8 px-2 md:px-8 text-lg md:text-xl leading-8'
-        dangerouslySetInnerHTML={{ __html: safeContent }}
-      />
-    </article>
+      </div>
+    </main>
   )
 }

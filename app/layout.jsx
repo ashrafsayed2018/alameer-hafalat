@@ -36,7 +36,14 @@ const FixedMobileCall = dynamic(() => import('../components/FixedMobileCall'), {
 
 const openSans = Open_Sans({ subsets: ['latin'] })
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://alameer-hafalat.com')
+
 export const metadata = {
+  metadataBase: new URL(SITE_URL),
   title: SiteInfo.title,
   description: SiteInfo.description,
   icons: {

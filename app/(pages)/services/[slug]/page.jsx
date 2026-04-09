@@ -2,10 +2,36 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ServicesList, SiteInfo } from '../../../data'
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://alameer-hafalat.com')
+
+const toAbsoluteUrl = (path) => new URL(String(path || ''), SITE_URL).toString()
+
+const normalizeSlug = (value = '') => {
+  const str = String(value)
+
+  try {
+    return decodeURIComponent(str).normalize('NFC').trim()
+  } catch {
+    return str.normalize('NFC').trim()
+  }
+}
+
+const getServiceBySlug = (slug) => {
+  const target = normalizeSlug(slug)
+
+  return ServicesList.find((s) => {
+    const serviceSlug = String(s.link || '').split('/').pop() || ''
+    return normalizeSlug(serviceSlug) === target
+  })
+}
+
 export async function generateMetadata({ params }) {
-  const { slug } = params
-  const decodedSlug = decodeURIComponent(slug)
-  const service = ServicesList.find((s) => s.link.endsWith(`/${decodedSlug}`))
+  const { slug } = await params
+  const service = getServiceBySlug(slug)
 
   if (!service) {
     return {
@@ -13,22 +39,33 @@ export async function generateMetadata({ params }) {
     }
   }
 
+  const canonical = toAbsoluteUrl(service.link)
+  const ogImage = toAbsoluteUrl(service.image)
+
   return {
+    metadataBase: new URL(SITE_URL),
     title: `${service.title} - ${SiteInfo.mobileNumber}`,
     description: service.description,
+    alternates: {
+      canonical,
+    },
     openGraph: {
       title: service.title,
       description: service.description,
-      images: [service.image],
+      url: canonical,
+      images: [
+        {
+          url: ogImage,
+          alt: service.title,
+        },
+      ],
     },
   }
 }
 
-export default function ServicePage({ params }) {
-  const { slug } = params
-  const decodedSlug = decodeURIComponent(slug)
-  // Find service where link ends with the slug (e.g., matches 'bench-rental' from '/services/bench-rental')
-  const service = ServicesList.find((s) => s.link.endsWith(`/${decodedSlug}`))
+export default async function ServicePage({ params }) {
+  const { slug } = await params
+  const service = getServiceBySlug(slug)
 
   if (!service) {
     notFound()

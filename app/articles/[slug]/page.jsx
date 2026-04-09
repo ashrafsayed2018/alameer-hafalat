@@ -13,7 +13,7 @@ const SITE_URL =
  * Strips any previously appended phone suffix from the title,
  * then appends a clean one. Prevents duplicates on re-render.
  */
-const buildSeoTitle = (title = '') => {
+const getSeoTitle = (title = '') => {
   const clean = title
     .replace(new RegExp(`(\\s*\\|\\s*\\+?${PHONE.replace('+', '')})+`, 'g'), '')
     .trim()
@@ -26,16 +26,9 @@ const getArticles = async () => {
   return articles
 }
 
-// ─── Static Params (required for static export / ISR) ─────────────────────────
-export async function generateStaticParams() {
-  const articles = await getArticles()
-  return articles.map((a) => ({ slug: encodeURIComponent(a.slug) }))
-}
-
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 export async function generateMetadata({ params }) {
-  // Next.js 15: params is a Promise
-  const { slug } = await params
+  const { slug } = params
   const decodedSlug = decodeURIComponent(slug)
 
   try {
@@ -52,7 +45,7 @@ export async function generateMetadata({ params }) {
       }
     }
 
-    const seoTitle = buildSeoTitle(article.title)
+    const seoTitle = getSeoTitle(article.title)
 
     return {
       title: seoTitle,
@@ -84,8 +77,7 @@ export async function generateMetadata({ params }) {
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 export default async function ArticlePage({ params }) {
-  // Next.js 15: params is a Promise
-  const { slug } = await params
+  const { slug } = params
   const decodedSlug = decodeURIComponent(slug)
 
   let article

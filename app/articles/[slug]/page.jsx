@@ -5,7 +5,12 @@ import { notFound } from 'next/navigation'
 // ─── Config ───────────────────────────────────────────────────────────────────
 const PHONE = '+96650623'
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://alameer-hafalat.com'
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://alameer-hafalat.com')
+
+const toAbsoluteUrl = (path) => new URL(String(path || ''), SITE_URL).toString()
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -26,39 +31,53 @@ const getArticles = async () => {
   return articles
 }
 
+const normalizeSlug = (value = '') => {
+  const str = String(value)
+
+  try {
+    return decodeURIComponent(str).normalize('NFC').trim()
+  } catch {
+    return str.normalize('NFC').trim()
+  }
+}
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 export async function generateMetadata({ params }) {
-  const { slug } = params
-  const decodedSlug = decodeURIComponent(slug)
+  const { slug } = await params
+  const decodedSlug = normalizeSlug(slug)
 
   try {
     const articles = await getArticles()
-    const article = articles.find((a) => a.slug === decodedSlug)
+    const article = articles.find((a) => normalizeSlug(a.slug) === decodedSlug)
 
     if (!article) {
       return {
         title: 'Article Not Found',
         description: 'The article you are looking for does not exist.',
         alternates: {
-          canonical: `${SITE_URL}/articles/${decodedSlug}`,
+          canonical: toAbsoluteUrl(`/articles/${encodeURIComponent(decodedSlug)}`),
         },
       }
     }
 
     const seoTitle = getSeoTitle(article.title)
+    const canonical = toAbsoluteUrl(`/articles/${encodeURIComponent(article.slug)}`)
+    const ogImage = toAbsoluteUrl(article.image)
 
     return {
+      metadataBase: new URL(SITE_URL),
       title: seoTitle,
       description: article.excerpt,
       alternates: {
-        canonical: `${SITE_URL}/articles/${decodedSlug}`,
+        canonical,
       },
       openGraph: {
         title: seoTitle,
         description: article.excerpt,
+        url: canonical,
         images: [
           {
-            url: article.image,
+            url: ogImage,
             width: 800,
             height: 600,
             alt: article.title,
@@ -77,14 +96,14 @@ export async function generateMetadata({ params }) {
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 export default async function ArticlePage({ params }) {
-  const { slug } = params
-  const decodedSlug = decodeURIComponent(slug)
+  const { slug } = await params
+  const decodedSlug = normalizeSlug(slug)
 
   let article
 
   try {
     const articles = await getArticles()
-    article = articles.find((a) => a.slug === decodedSlug)
+    article = articles.find((a) => normalizeSlug(a.slug) === decodedSlug)
   } catch (error) {
     console.error('Error loading articles:', error)
     return <div>Article could not be loaded.</div>

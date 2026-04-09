@@ -32,7 +32,10 @@ const sanitizeHtmlLite = (html = '') => {
 
   out = out.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
   out = out.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-  out = out.replace(/\s(href|src)\s*=\s*("|')\s*javascript:[^"']*\2/gi, ' $1=$2#$2')
+  out = out.replace(
+    /\s(href|src)\s*=\s*("|')\s*javascript:[^"']*\2/gi,
+    ' $1=$2#$2',
+  )
 
   return out
 }
@@ -69,7 +72,7 @@ const parseDate = (dateStr) => {
   if (dateStr.includes('T')) {
     const standard = dateStr.replace(
       /(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/,
-      '$1-$2-$3T$4:$5:$6.$7Z'
+      '$1-$2-$3T$4:$5:$6.$7Z',
     )
     const ts = Date.parse(standard)
     if (!isNaN(ts)) return ts
@@ -100,13 +103,17 @@ export async function generateMetadata({ params }) {
         title: 'Article Not Found',
         description: 'The article you are looking for does not exist.',
         alternates: {
-          canonical: toAbsoluteUrl(`/articles/${encodeURIComponent(decodedSlug)}`),
+          canonical: toAbsoluteUrl(
+            `/articles/${encodeURIComponent(decodedSlug)}`,
+          ),
         },
       }
     }
 
     const seoTitle = getSeoTitle(article.title)
-    const canonical = toAbsoluteUrl(`/articles/${encodeURIComponent(article.slug)}`)
+    const canonical = toAbsoluteUrl(
+      `/articles/${encodeURIComponent(article.slug)}`,
+    )
     const ogImage = toAbsoluteUrl(article.image)
 
     return {
@@ -169,14 +176,19 @@ export default async function ArticlePage({ params }) {
       })
     : null
 
-  const canonical = toAbsoluteUrl(`/articles/${encodeURIComponent(article.slug)}`)
+  const canonical = toAbsoluteUrl(
+    `/articles/${encodeURIComponent(article.slug)}`,
+  )
   const readingMinutes = estimateReadingTimeMinutes(article.content ?? '')
   const shareUrl = encodeURIComponent(canonical)
   const shareTitle = encodeURIComponent(article.title)
-  const whatsappShareUrl = `https://wa.me/?text=${shareTitle}%0A${shareUrl}`
+  const whatsappShareUrl = `https://wa.me/?text=${canonical}`
 
   const relatedArticles = (await getArticles())
-    .filter((a) => a && a.slug && normalizeSlug(a.slug) !== normalizeSlug(article.slug))
+    .filter(
+      (a) =>
+        a && a.slug && normalizeSlug(a.slug) !== normalizeSlug(article.slug),
+    )
     .sort((a, b) => parseDate(b.created_at) - parseDate(a.created_at))
     .slice(0, 4)
 
@@ -308,7 +320,9 @@ export default async function ArticlePage({ params }) {
           <aside className='lg:col-span-4'>
             <div className='sticky top-28 space-y-6'>
               <div className='bg-white border border-gray-100 rounded-3xl shadow-sm p-6'>
-                <p className='text-lg font-bold text-[#00524e]'>للحجز والاستفسار</p>
+                <p className='text-lg font-bold text-[#00524e]'>
+                  للحجز والاستفسار
+                </p>
                 <p className='mt-2 text-3xl font-extrabold text-amber-500 dir-ltr text-right'>
                   {SiteInfo.mobileNumber}
                 </p>
@@ -335,7 +349,8 @@ export default async function ArticlePage({ params }) {
                   جهّز مناسبتك مع خدمات الأمير
                 </p>
                 <p className='mt-3 text-white/90 leading-relaxed'>
-                  تواصل معنا الآن للحصول على عرض سعر سريع وخدمة فورية داخل الكويت.
+                  تواصل معنا الآن للحصول على عرض سعر سريع وخدمة فورية داخل
+                  الكويت.
                 </p>
                 <div className='mt-5'>
                   <a

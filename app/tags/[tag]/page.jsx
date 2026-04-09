@@ -9,7 +9,7 @@ import { SiteInfo } from '../../data'
 import { tags } from '../../tags'
 
 export async function generateMetadata({ params }) {
-  const { tag: tagSlug } = params
+  const { tag: tagSlug } = await params
   const decodedSlug = decodeURIComponent(tagSlug)
   const tag = tags.find((t) => t.slug === decodedSlug)
 
@@ -25,8 +25,8 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default function TagPage({ params }) {
-  const { tag: tagSlug } = params
+export default async function TagPage({ params }) {
+  const { tag: tagSlug } = await params
   const decodedSlug = decodeURIComponent(tagSlug)
   const tag = tags.find((t) => t.slug === decodedSlug)
 

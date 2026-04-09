@@ -1,4 +1,3 @@
-import DOMPurify from 'isomorphic-dompurify'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
@@ -24,6 +23,16 @@ const getSeoTitle = (title = '') => {
     .trim()
 
   return clean ? `${clean} | ${PHONE}` : PHONE
+}
+
+const sanitizeHtmlLite = (html = '') => {
+  let out = String(html)
+
+  out = out.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+  out = out.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+  out = out.replace(/\s(href|src)\s*=\s*("|')\s*javascript:[^"']*\2/gi, ' $1=$2#$2')
+
+  return out
 }
 
 const getArticles = async () => {
@@ -113,8 +122,7 @@ export default async function ArticlePage({ params }) {
     notFound()
   }
 
-  // Sanitize HTML content to prevent XSS
-  const safeContent = DOMPurify.sanitize(article.content ?? '')
+  const safeContent = sanitizeHtmlLite(article.content ?? '')
 
   const publishedDate = article.created_at
     ? new Date(article.created_at).toLocaleDateString('ar-SA', {

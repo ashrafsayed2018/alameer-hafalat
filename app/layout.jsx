@@ -64,9 +64,26 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+  const telephone = SiteInfo.mobileNumber
+    ? String(SiteInfo.mobileNumber).trim()
+    : null
+
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SiteInfo.title,
+    url: SITE_URL,
+    ...(telephone ? { telephone } : {}),
+    logo: new URL('/icon.ico', SITE_URL).toString(),
+  }
+
   return (
     <html lang="ar" dir="rtl">
       <body className={`${openSans.className} bg-[#f8f4f4]`}>
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
         <AppProvider>
           <Suspense fallback={<Loading />}>
             <MenuDropDown />

@@ -19,12 +19,22 @@ const toAbsoluteUrl = (path) => new URL(String(path || ''), SITE_URL).toString()
  * Strips any previously appended phone suffix from the title,
  * then appends a clean one. Prevents duplicates on re-render.
  */
+const shortenTitle = (value = '', max = 58) => {
+  const str = String(value).trim()
+  if (!str) return ''
+  if (str.length <= max) return str
+  return `${str.slice(0, max - 1).trimEnd()}…`
+}
+
 const getSeoTitle = (title = '') => {
-  const clean = title
-    .replace(new RegExp(`(\\s*\\|\\s*\\+?${PHONE.replace('+', '')})+`, 'g'), '')
+  const digits = PHONE.replace('+', '')
+  const clean = String(title)
+    .replace(new RegExp(`(\\s*\\|\\s*\\+?${digits})|(\\+?${digits}\\s*\\|\\s*)`, 'g'), '')
+    .replace(/\\s*\|\\s*$/g, '')
     .trim()
 
-  return clean ? `${clean} | ${PHONE}` : PHONE
+  const short = shortenTitle(clean)
+  return short ? `${PHONE} | ${short}` : PHONE
 }
 
 const sanitizeHtmlLite = (html = '') => {

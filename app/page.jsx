@@ -13,7 +13,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className='relative h-[700px] w-full bg-black'>
         <Image
-          src='/images/hero1.webp'
+          src='/images/hero.webp'
           alt='Hero Background'
           fill
           className='object-cover'
@@ -173,7 +173,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
     </main>
   )
 }

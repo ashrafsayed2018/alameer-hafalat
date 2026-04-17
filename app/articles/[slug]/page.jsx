@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { SiteInfo } from '../../data'
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -65,6 +65,12 @@ const normalizeSlug = (value = '') => {
   }
 }
 
+const canonicalizeSlug = (value = '') =>
+  normalizeSlug(value)
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\s‐‑‒–—―]+/g, '-')
+    .replace(/-+/g, '-')
+
 const stripHtml = (html = '') =>
   String(html)
     .replace(/<[^>]*>/g, ' ')
@@ -106,7 +112,9 @@ export async function generateMetadata({ params }) {
 
   try {
     const articles = await getArticles()
-    const article = articles.find((a) => normalizeSlug(a.slug) === decodedSlug)
+    const article = articles.find(
+      (a) => canonicalizeSlug(a.slug) === canonicalizeSlug(decodedSlug),
+    )
 
     if (!article) {
       return {
@@ -165,7 +173,9 @@ export default async function ArticlePage({ params }) {
 
   try {
     const articles = await getArticles()
-    article = articles.find((a) => normalizeSlug(a.slug) === decodedSlug)
+    article = articles.find(
+      (a) => canonicalizeSlug(a.slug) === canonicalizeSlug(decodedSlug),
+    )
   } catch (error) {
     console.error('Error loading articles:', error)
     return <div>Article could not be loaded.</div>
@@ -173,6 +183,16 @@ export default async function ArticlePage({ params }) {
 
   if (!article) {
     notFound()
+  }
+
+  const canonicalSlug = normalizeSlug(article.slug)
+
+  if (canonicalizeSlug(decodedSlug) !== canonicalizeSlug(canonicalSlug)) {
+    redirect(`/articles/${encodeURIComponent(canonicalSlug)}`)
+  }
+
+  if (decodedSlug !== canonicalSlug) {
+    redirect(`/articles/${encodeURIComponent(canonicalSlug)}`)
   }
 
   const safeContent = sanitizeHtmlLite(article.content ?? '')

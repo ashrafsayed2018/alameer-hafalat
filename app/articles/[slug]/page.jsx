@@ -262,13 +262,14 @@ export default async function ArticlePage({ params }) {
           </div>
 
           {article.image ? (
-            <div className='relative w-full aspect-[16/9] bg-gray-100'>
+            <div className='w-full bg-white'>
               <Image
                 src={article.image}
                 alt={article.title}
-                fill
+                width={1600}
+                height={1200}
                 priority
-                className='object-cover'
+                className='w-full h-auto object-contain'
                 sizes='(max-width: 1024px) 100vw, 1024px'
               />
             </div>
@@ -296,13 +297,14 @@ export default async function ArticlePage({ params }) {
                       href={`/articles/${a.slug}`}
                       className='group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow'
                     >
-                      <div className='relative w-full aspect-[16/10] bg-gray-100'>
+                      <div className='w-full bg-white'>
                         {a.image ? (
                           <Image
                             src={a.image}
                             alt={a.title}
-                            fill
-                            className='object-cover group-hover:scale-[1.02] transition-transform'
+                            width={1200}
+                            height={900}
+                            className='w-full h-auto object-contain group-hover:scale-[1.02] transition-transform'
                             sizes='(max-width: 640px) 100vw, 50vw'
                           />
                         ) : null}

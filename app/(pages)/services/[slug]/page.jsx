@@ -1,7 +1,10 @@
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
+import { faPhone } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { articles } from '../../../articles'
-import Card from '../../../../components/Card'
 import { ServicesList, SiteInfo } from '../../../data'
 
 const SITE_URL =
@@ -149,9 +152,72 @@ export default async function ServicePage({ params }) {
             <div className='mb-6 flex flex-wrap items-end justify-between gap-3'>
               <div><h2 className='text-2xl md:text-3xl font-bold text-[#00524e]'>مقالات متعلقة بـ {service.title}</h2><p className='mt-2 text-gray-500'>محتوى مفيد مرتبط بنفس الخدمة لمساعدتك في الاختيار والتخطيط.</p></div>
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6'>
+            <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3'>
               {relatedArticles.map((article) => (
-                <Card key={article.id} item={{ ...article, description: article.excerpt, link: `/articles/${article.slug}`, date: article.created_at ? article.created_at.split('T')[0] : '' }} />
+                <div
+                  key={article.id}
+                  className='group flex h-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md transition-all duration-300 hover:shadow-2xl'
+                >
+                  <div className='dir-ltr flex items-center justify-between bg-[#00524e] px-2 py-2 text-center text-sm font-bold text-white md:text-base'>
+                    <span className='rounded bg-amber-500 px-2 py-1 text-xs text-white'>
+                      {SiteInfo.mobileNumber}
+                    </span>
+                    <span className='flex-1 truncate px-1 text-center'>
+                      {article.title}
+                    </span>
+                  </div>
+                  <div className='relative h-[450px] w-full overflow-hidden bg-gray-50'>
+                    <Image
+                      src={article.image}
+                      alt={article.title}
+                      fill
+                      className='object-cover transition-transform duration-700 group-hover:scale-110'
+                    />
+                    <div className='absolute inset-0 bg-black/20 transition-colors duration-300 group-hover:bg-black/0' />
+                  </div>
+                  <div className='flex flex-1 flex-col p-5 text-center'>
+                    <h3 className='mb-2 line-clamp-1 text-lg font-bold text-[#00524e]'>
+                      {article.title}
+                    </h3>
+                    <div className='mb-3 flex items-center justify-center gap-2 text-xs text-gray-400' dir='ltr'>
+                      <span>{article.created_at ? article.created_at.split('T')[0] : ''}</span>
+                    </div>
+                    <div className='mb-3'>
+                      <Link
+                        href={service.link}
+                        className='inline-flex items-center rounded-full bg-[#00524e]/10 px-3 py-1 text-xs font-semibold text-[#00524e] transition-colors hover:bg-[#00524e] hover:text-white'
+                      >
+                        {service.title}
+                      </Link>
+                    </div>
+                    <p className='mb-4 min-h-[4.5rem] line-clamp-5 text-sm leading-relaxed text-gray-500'>
+                      {article.excerpt} {SiteInfo.mobileNumber}
+                    </p>
+                    <Link
+                      href={`/articles/${article.slug}`}
+                      className='mt-auto inline-block rounded-full border border-[#00524e] px-4 py-1 text-sm font-semibold text-[#00524e] transition-colors hover:bg-[#00524e] hover:text-white'
+                    >
+                      التفاصيل
+                    </Link>
+                  </div>
+                  <div className='flex items-center justify-center gap-8 bg-[#00524e] py-3 text-white'>
+                    <a
+                      href={`tel:${SiteInfo.mobileNumber}`}
+                      className='flex items-center gap-2 transition-colors hover:text-amber-400'
+                    >
+                      <FontAwesomeIcon icon={faPhone} className='h-5 w-5' />
+                      <span className='text-sm font-bold'>اتصال</span>
+                    </a>
+                    <div className='h-6 w-[1px] bg-gray-500'></div>
+                    <a
+                      href={`https://wa.me/${SiteInfo.whatsappNumber}`}
+                      className='flex items-center gap-2 transition-colors hover:text-green-400'
+                    >
+                      <FontAwesomeIcon icon={faWhatsapp} className='h-5 w-5' />
+                      <span className='text-sm font-bold'>واتساب</span>
+                    </a>
+                  </div>
+                </div>
               ))}
             </div>
           </section>

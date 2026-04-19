@@ -58,7 +58,7 @@ export default function BlogPage() {
           {sortedArticles.map((article) => (
             <div
               key={article.id}
-              className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 group border border-gray-100'
+              className='flex h-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md transition-all duration-300 group hover:shadow-2xl'
             >
               {/* Card Header */}
               <div className='bg-[#00524e] text-white font-bold text-center py-2 px-2 text-sm md:text-base flex justify-between items-center dir-ltr'>
@@ -83,7 +83,7 @@ export default function BlogPage() {
               </div>
 
               {/* Content */}
-              <div className='p-5 text-center'>
+              <div className='flex flex-1 flex-col p-5 text-center'>
                 <h3 className='font-bold text-[#00524e] text-lg mb-2 line-clamp-1'>
                   {article.title}
                 </h3>
@@ -112,7 +112,7 @@ export default function BlogPage() {
                 </p>
                 <Link
                   href={`/articles/${article.slug}`}
-                  className='inline-block text-[#00524e] border border-[#00524e] px-4 py-1 rounded-full text-sm font-semibold hover:bg-[#00524e] hover:text-white transition-colors'
+                  className='mt-auto inline-block rounded-full border border-[#00524e] px-4 py-1 text-sm font-semibold text-[#00524e] transition-colors hover:bg-[#00524e] hover:text-white'
                 >
                   التفاصيل
                 </Link>

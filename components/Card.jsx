@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 function Card({ item, imageStyle, isService = false }) {
   return (
-    <div className='flex flex-col bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300 h-full border border-gray-100'>
+    <div className='group flex h-full flex-col overflow-hidden rounded-[28px] border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl'>
       {/* <div className='relative overflow-hidden bg-gray-50'>
         <Image
           src={item.image}
@@ -16,27 +16,26 @@ function Card({ item, imageStyle, isService = false }) {
       </div> */}
 
       {/* Image */}
-      <div className='relative h-[500px] w-full overflow-hidden bg-gray-50'>
+      <div className={`relative w-full overflow-hidden bg-gray-50 ${isService ? 'h-[340px]' : 'h-[280px]'}`}>
         <Image
           src={item.image}
           alt={item.title}
           fill
-          className='object-cover group-hover:scale-110 transition-transform duration-700'
+          className='object-cover transition-transform duration-700 group-hover:scale-105'
         />
-        {/* Overlay on hover */}
-        <div className='absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300' />
+        <div className='absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/35 to-transparent' />
       </div>
 
       {/* Content Body */}
-      <div className='p-6 flex flex-col items-center text-center flex-1'>
+      <div className='flex flex-1 flex-col p-6 text-right'>
         {/* Title */}
-        <h3 className='text-xl font-bold text-[#00524e] mb-3 group-hover:text-[#b8860b] transition-colors'>
+        <h3 className='mb-3 line-clamp-2 text-xl font-bold leading-8 text-[#00524e] transition-colors group-hover:text-[#b8860b]'>
           {item.title}
         </h3>
 
         {/* Meta Data */}
         {(item.date || item.commentsCount !== undefined) && (
-          <div className='text-gray-400 text-xs mb-4 flex items-center gap-3 font-medium'>
+          <div className='mb-4 flex items-center gap-3 text-xs font-medium text-gray-400'>
             {item.date && <span>{item.date}</span>}
             {item.commentsCount !== undefined && (
               <>
@@ -48,15 +47,13 @@ function Card({ item, imageStyle, isService = false }) {
         )}
 
         {/* Description */}
-        <p className='text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed'>
+        <p className={`mb-6 text-sm leading-7 text-gray-500 ${isService ? 'line-clamp-3' : 'line-clamp-4'}`}>
           {item.description}
         </p>
-
-        {/* Details Button */}
         <div className='mt-auto'>
           <Link
             href={item.link}
-            className='inline-block border border-[#00524e] text-[#00524e] px-8 py-2 rounded-full hover:bg-[#00524e] hover:text-white transition-all duration-300 font-bold text-sm'
+            className='inline-flex items-center justify-center rounded-full border border-[#00524e] px-6 py-2.5 text-sm font-bold text-[#00524e] transition-all duration-300 hover:bg-[#00524e] hover:text-white'
           >
             التفاصيل
           </Link>

@@ -1,4 +1,191 @@
-export const articles = [
+import { ServicesList, SiteInfo } from './data'
+
+const normalizeText = (value = '') =>
+  String(value)
+    .normalize('NFC')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[-_/]+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+const SERVICE_ALIASES = {
+  'تأجير مكيفات': ['مكيفات', 'تبريد'],
+  'تأجير خيام': ['خيام'],
+  'تأجير كراسي وطاولات': [
+    'كراسي وطاولات',
+    'طاولات وكراسي',
+    'الطاولات والكراسي',
+    'الكراسي والطاولات',
+    'تأجير الكراسي والطاولات',
+    'تأجير طاولات وكراسي',
+    'مستلزمات الحفلات',
+    'شركة تجهيز حفلات',
+    'تجهيز مناسبات',
+    'تجهيز مناسبتك',
+    'البنشات',
+    'تأجير البنشات',
+  ],
+  'خدمة ضيافة نسائي': ['ضيافة نسائية', 'خدمة ضيافة نسائية', 'بنات سيرفس'],
+  'خدمة ضيافة رجالى': ['ضيافة رجالي', 'خدمة ضيافة رجالي', 'صبابين'],
+  'تأجير دفايات': ['دفايات', 'تدفئة'],
+  'تأجير كنب مطروق': ['كنب مطروق'],
+  'تأجير كنب امريكي': [
+    'كنب امريكي',
+    'كنب أمريكي',
+    'الكنب الأمريكي',
+    'كنفات',
+  ],
+  'تأجير فاليةاو باركن ': ['فاليه باركن', 'فالية باركن', 'valet'],
+  'تأجير كراسي vip': [
+    'كراسي vip',
+    'كراسي كبار الشخصيات',
+    'استقبالات كبار الشخصيات',
+    'كبار الشخصيات',
+    'استقبال رسمي vip',
+    'vip',
+    'vib',
+    'كراسي ملكية',
+  ],
+  'تأجير كراسي عزاء': ['كراسي عزاء', 'العزاء'],
+  'تأجير زينة اعراس': [
+    'زينة اعراس',
+    'زينة أعراس',
+    'زينة الأفراح',
+    'ليتات زينة',
+    'إضاءة منازل وحدائق',
+    'اضاءة منازل وحدائق',
+    'زينة منازل وحدائق',
+    'تسكير الحدائق',
+    'تسكير المنازل',
+    'التساكير',
+    'تأجير التساكير',
+    'كوش الأفراح',
+    'الكوش',
+    'الكوشة',
+    'تأجير الكوش',
+    'تنظيم الأعراس',
+    'تنظيم أعراس',
+    'الأعراس والمناسبات',
+  ],
+  'تأجير كراسي شفافة': [
+    'كراسي شفافة',
+    'نابليون',
+    'شفاف',
+    'شفافة',
+    'شفاش',
+    'كراسي أطفال',
+  ],
+  'خدمة تفتيش تليفونات': ['تفتيش تليفونات', 'تفتيش الهواتف'],
+}
+
+const ARTICLE_SERVICE_OVERRIDES = new Map([
+  ['باقات متكاملة لتجهيز الحفلات من الألف إلى الياء – الأمير للضيافة | 96650623', 'تأجير كراسي وطاولات'],
+  ['الأمير لتأجير الكراسي في اليرموك – 96650623', 'تأجير كراسي وطاولات'],
+  ['الأمير لتأجير الكنب المطرّق في الفيحاء – 96650623', 'تأجير كنب مطروق'],
+  ['تأجير كراسي استلسلاس مخمل دهبي في الكويت – فخامة لا مثيل لها للمؤتمرات والاحتفالات', 'تأجير كراسي vip'],
+  ['تأجير كراسي للمناسبات في الكويت بأسعار مناسبة', 'تأجير كراسي وطاولات'],
+  ['أفضل شركات تأجير كراسي للحفلات والأعراس في الكويت', 'تأجير كراسي وطاولات'],
+  ['طاولات مستديرة عصرية من الأمير تلائم المناسبات الاجتماعية وتضمن تفاعلاً مميزاً بين الضيوف.', 'تأجير كراسي وطاولات'],
+  ['قاعات فخمة بإضاءة جذابة من الأمير، خيار مميز لحفلات الاستقبال والأمسيات الخاصة في الكويت.', 'تأجير زينة اعراس'],
+  ['كراسي استرتش مريحة ومغطاة بأقمشة فاخرة من الأمير، مثالية لحفلات الزفاف والمناسبات في الكويت.', 'تأجير كراسي وطاولات'],
+  ['تجهيزات بوفيهات الحفلات في الكويت', 'خدمة ضيافة رجالى'],
+  ['أفضل أماكن حفلات الزفاف في الكويت', 'تأجير زينة اعراس'],
+  ['تنظيم حفلات الأطفال في الكويت', 'تأجير زينة اعراس'],
+  ['تأجير أجهزة الصوت والإضاءة للحفلات في الكويت', 'تأجير زينة اعراس'],
+  ['تنظيم حفلات العيد والمناسبات الخاصة', 'تأجير زينة اعراس'],
+  ['تنسيق حفلات تخرج في الكويت', 'تأجير زينة اعراس'],
+  ['تنظيم حفلات الخطوبة في الكويت', 'تأجير زينة اعراس'],
+  ['تنظيم حفلات الشركات والمؤسسات في الكويت', 'تأجير كراسي وطاولات'],
+  ['تنسيق الحفلات الخارجية في الكويت', 'تأجير خيام'],
+  ['تنظيم حفلات أعياد الميلاد في الكويت', 'تأجير زينة اعراس'],
+  ['أفضل شركات تنظيم الحفلات في الكويت', 'تأجير كراسي وطاولات'],
+  ['تنظيم حفلات الزفاف في الكويت', 'تأجير زينة اعراس'],
+  ['افضل شركات تاءجير زينة الافراح في الاحمدي', 'تأجير زينة اعراس'],
+  ['افضل شركات تأجير زينة الافراح في مبارك الكبير', 'تأجير زينة اعراس'],
+  ['افضل خدمات تاءجير زينة الافراح في حولي', 'تأجير زينة اعراس'],
+  ['افضل شركة تأجير زينة افراح في الفروانية', 'تأجير زينة اعراس'],
+  ['تأجير كراسي VIP في الكويت: الفخامة والراحة في كل مناسبة', 'تأجير كراسي vip'],
+].map(([key, service]) => [normalizeText(key), service]))
+
+const PHONE_NUMBER_TITLE_OVERRIDES = new Set(ARTICLE_SERVICE_OVERRIDES.keys())
+
+const appendPhoneNumberToTitle = (title = '') =>
+  title.includes(SiteInfo.mobileNumber)
+    ? title
+    : `${title} | ${SiteInfo.mobileNumber}`
+
+const ARTICLE_CTA_HTML = `<section class="mt-10 rounded-3xl border border-[#00524e]/10 bg-[#f7fffe] p-6 text-center"><h2 class="text-2xl font-bold text-[#00524e]">للحجز والاستفسار</h2><p class="mt-3 text-base leading-8 text-gray-700">للحجز أو الاستفسار عن تجهيز الحفلات والمناسبات، تواصل معنا الآن على رقم <a href="tel:${SiteInfo.mobileNumber}" class="font-extrabold text-[#00524e]">${SiteInfo.mobileNumber}</a> أو عبر <a href="https://wa.me/${SiteInfo.whatsappNumber}" class="font-extrabold text-[#25D366]">واتساب</a>.</p></section>`
+
+const appendArticleCta = (content = '') =>
+  content.includes(`tel:${SiteInfo.mobileNumber}`)
+    ? content
+    : `${content}${ARTICLE_CTA_HTML}`
+
+const GENERIC_SERVICE_WORDS = new Set([
+  'تاجير',
+  'تأجير',
+  'خدمة',
+  'خدمات',
+  'في',
+  'من',
+  'على',
+  'مع',
+  'الكويت',
+])
+
+const getMeaningfulTokens = (value = '') =>
+  [
+    ...new Set(
+      normalizeText(value)
+        .split(' ')
+        .filter(
+          (token) =>
+            token && !GENERIC_SERVICE_WORDS.has(token) && token.length > 1,
+        ),
+    ),
+  ]
+
+const getArticleService = (article) => {
+  const overrideService = [article.title, article.slug]
+    .filter(Boolean)
+    .map(normalizeText)
+    .map((key) => ARTICLE_SERVICE_OVERRIDES.get(key))
+    .find(Boolean)
+
+  if (overrideService) {
+    return overrideService
+  }
+
+  const haystack = normalizeText(
+    [article.title, article.slug, article.excerpt].filter(Boolean).join(' '),
+  )
+  const haystackTokens = getMeaningfulTokens(haystack)
+
+  for (const service of ServicesList) {
+    const candidates = [service.title, ...(SERVICE_ALIASES[service.title] || [])]
+    if (
+      candidates.some((candidate) => {
+        const normalizedCandidate = normalizeText(candidate)
+        if (haystack.includes(normalizedCandidate)) {
+          return true
+        }
+
+        const candidateTokens = getMeaningfulTokens(candidate)
+        return (
+          candidateTokens.length > 0 &&
+          candidateTokens.every((token) => haystackTokens.includes(token))
+        )
+      })
+    ) {
+      return service.title
+    }
+  }
+
+  return null
+}
+
+const articleEntries = [
   {
     id: 1,
     title: `أفضل خدمات تأجير كراسي العزاء في الكويت`,
@@ -5351,3 +5538,14 @@ export const articles = [
     "created_at": "2026-03-02T00:00:00.000Z"
   }
 ]
+
+export const articles = articleEntries.map((article) => ({
+  ...article,
+  title: PHONE_NUMBER_TITLE_OVERRIDES.has(normalizeText(article.title))
+    ? appendPhoneNumberToTitle(article.title)
+    : article.title,
+  content: PHONE_NUMBER_TITLE_OVERRIDES.has(normalizeText(article.title))
+    ? appendArticleCta(article.content)
+    : article.content,
+  service: article.service ?? getArticleService(article),
+}))

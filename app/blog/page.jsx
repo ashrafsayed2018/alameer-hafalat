@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import Link from 'next/link'
 import { articles } from '../articles'
-import { SiteInfo } from '../data'
+import { ServicesList, SiteInfo } from '../data'
 
 export default function BlogPage() {
   const parseDate = (dateStr) => {
@@ -34,6 +34,10 @@ export default function BlogPage() {
     
     return 0
   }
+
+  const serviceLinksByTitle = new Map(
+    ServicesList.map((service) => [service.title, service.link]),
+  )
 
   const sortedArticles = [...articles]
     // Filter out invalid articles
@@ -93,6 +97,16 @@ export default function BlogPage() {
                       : ''}
                   </span>
                 </div>
+                {article.service ? (
+                  <div className='mb-3'>
+                    <Link
+                      href={serviceLinksByTitle.get(article.service) || '#'}
+                      className='inline-flex items-center rounded-full bg-[#00524e]/10 px-3 py-1 text-xs font-semibold text-[#00524e] hover:bg-[#00524e] hover:text-white transition-colors'
+                    >
+                      {article.service}
+                    </Link>
+                  </div>
+                ) : null}
                 <p className='text-gray-500 text-sm leading-relaxed mb-4 line-clamp-5 min-h-[4.5rem]'>
                   {article.excerpt} {SiteInfo.mobileNumber}
                 </p>

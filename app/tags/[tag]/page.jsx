@@ -25,6 +25,16 @@ export async function generateMetadata({ params }) {
   }
 }
 
+const normalizeText = (value = '') =>
+  String(value)
+    .normalize('NFC')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[-_/]+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+
 export default async function TagPage({ params }) {
   const { tag: tagSlug } = await params
   const decodedSlug = decodeURIComponent(tagSlug)
@@ -34,10 +44,15 @@ export default async function TagPage({ params }) {
     notFound()
   }
 
-  // Filter articles based on keywords
+  // Filter articles based on tag keywords using only article summary fields
   const tagArticles = articles.filter((article) => {
-    const content = (article.title + ' ' + article.excerpt + ' ' + article.content).toLowerCase()
-    return tag.keywords.some((keyword) => content.includes(keyword.toLowerCase()))
+    const searchableText = normalizeText(
+      [article.title, article.slug, article.excerpt].filter(Boolean).join(' '),
+    )
+
+    return tag.keywords.some((keyword) =>
+      searchableText.includes(normalizeText(keyword)),
+    )
   })
 
   // Sort by date (newest first)

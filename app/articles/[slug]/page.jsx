@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import { SiteInfo } from '../../data'
 
 // ─── Config ───────────────────────────────────────────────────────────────────
-const PHONE = '+96650623'
+const PHONE = `+${SiteInfo.mobileNumber}`
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL
@@ -16,8 +16,7 @@ const toAbsoluteUrl = (path) => new URL(String(path || ''), SITE_URL).toString()
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Strips any previously appended phone suffix from the title,
- * then appends a clean one. Prevents duplicates on re-render.
+ * Keeps titles short enough for SERP display while allowing a phone prefix.
  */
 const shortenTitle = (value = '', max = 58) => {
   const str = String(value).trim()
@@ -35,6 +34,22 @@ const getSeoTitle = (title = '') => {
 
   const short = shortenTitle(clean)
   return short ? `${PHONE} | ${short}` : PHONE
+}
+
+const getSeoDescription = (description = '') => {
+  const digits = PHONE.replace('+', '')
+  const clean = String(description)
+    .replace(new RegExp(`\\+?${digits}`, 'g'), '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (!clean) return PHONE
+
+  const words = clean.split(' ')
+  const insertAt = Math.min(3, words.length)
+  words.splice(insertAt, 0, PHONE)
+
+  return words.join(' ')
 }
 
 const sanitizeHtmlLite = (html = '') => {
@@ -129,6 +144,7 @@ export async function generateMetadata({ params }) {
     }
 
     const seoTitle = getSeoTitle(article.title)
+    const seoDescription = getSeoDescription(article.excerpt)
     const canonical = toAbsoluteUrl(
       `/articles/${encodeURIComponent(article.slug)}`,
     )
@@ -137,13 +153,13 @@ export async function generateMetadata({ params }) {
     return {
       metadataBase: new URL(SITE_URL),
       title: seoTitle,
-      description: article.excerpt,
+      description: seoDescription,
       alternates: {
         canonical,
       },
       openGraph: {
         title: seoTitle,
-        description: article.excerpt,
+        description: seoDescription,
         url: canonical,
         images: [
           {

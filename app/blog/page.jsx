@@ -1,145 +1,36 @@
-'use client'
+import { articles as staticArticles } from '../articles'
+import { createClient } from '../../lib/supabase/server'
+import BlogClient from './BlogClient'
 
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
-import { faPhone } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Image from 'next/image'
-import Link from 'next/link'
-import { articles } from '../articles'
-import { ServicesList, SiteInfo } from '../data'
+export const revalidate = 60
 
-export default function BlogPage() {
-  const parseDate = (dateStr) => {
-    if (!dateStr) return 0
-    // Handle "YYYY-MM-DDTHH-MM-SS-MSZ" or similar
-    if (dateStr.includes('T')) {
-       // Replace hyphens in time part if needed to match ISO format
-       const standard = dateStr.replace(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/, '$1-$2-$3T$4:$5:$6.$7Z')
-       const ts = Date.parse(standard)
-       if (!isNaN(ts)) return ts
-       return Date.parse(dateStr) || 0
-    }
-    
-    // Handle DD-MM-YYYY
-    const dmy = dateStr.match(/^(\d{2})-(\d{2})-(\d{4})$/)
-    if (dmy) {
-      return new Date(`${dmy[3]}-${dmy[2]}-${dmy[1]}`).getTime()
-    }
+export default async function BlogPage() {
+  // Fetch Supabase posts
+  let dbPosts = []
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('posts')
+      .select('id, title, slug, excerpt, image_url, post_date, created_at')
+      .order('created_at', { ascending: false })
+    dbPosts = data || []
+  } catch {}
 
-    // Handle YYYY-MM-DD
-    const ymd = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-    if (ymd) {
-      return new Date(dateStr).getTime()
-    }
-    
-    return 0
-  }
+  // Map DB posts to same shape as static articles
+  const dbArticles = dbPosts.map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug || p.id,
+    excerpt: p.excerpt || '',
+    image: p.image_url || '/images/default.jpg',
+    created_at: p.post_date || p.created_at,
+    service: null,
+  }))
 
-  const serviceLinksByTitle = new Map(
-    ServicesList.map((service) => [service.title, service.link]),
+  // Merge: DB posts first, then static
+  const allArticles = [...dbArticles, ...staticArticles].filter(
+    (a) => a && a.title
   )
 
-  const sortedArticles = [...articles]
-    // Filter out invalid articles
-    .filter((article) => article && article.title)
-    .sort((a, b) => {
-      return parseDate(b.created_at) - parseDate(a.created_at)
-    })
-
-  return (
-    <main className='font-sans' dir='rtl'>
-      <section className='py-16 bg-gray-50 px-4 md:px-12'>
-        <h1 className='text-center text-3xl md:text-4xl font-bold text-[#00524e] mb-16 relative'>
-          المدونة
-          <span className='block w-24 h-1 bg-amber-500 mx-auto mt-4 rounded-full'></span>
-        </h1>
-
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
-          {sortedArticles.map((article) => (
-            <div
-              key={article.id}
-              className='flex h-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md transition-all duration-300 group hover:shadow-2xl'
-            >
-              {/* Card Header */}
-              <div className='bg-[#00524e] text-white font-bold text-center py-2 px-2 text-sm md:text-base flex justify-between items-center dir-ltr'>
-                <span className='bg-amber-500 text-xs px-2 py-1 rounded text-white'>
-                  {SiteInfo.mobileNumber}
-                </span>
-                <span className='flex-1 text-center truncate px-1'>
-                  {article.title}
-                </span>
-              </div>
-
-              {/* Image */}
-              <div className='relative h-[450px] w-full overflow-hidden bg-gray-50'>
-                <Image
-                  src={article.image}
-                  alt={article.title}
-                  fill
-                  className='object-cover group-hover:scale-110 transition-transform duration-700'
-                />
-                {/* Overlay on hover */}
-                <div className='absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300' />
-              </div>
-
-              {/* Content */}
-              <div className='flex flex-1 flex-col p-5 text-center'>
-                <h3 className='font-bold text-[#00524e] text-lg mb-2 line-clamp-1'>
-                  {article.title}
-                </h3>
-                <div
-                  className='flex justify-center items-center gap-2 text-xs text-gray-400 mb-3'
-                  dir='ltr'
-                >
-                  <span>
-                    {article.created_at
-                      ? article.created_at.split('T')[0]
-                      : ''}
-                  </span>
-                </div>
-                {article.service ? (
-                  <div className='mb-3'>
-                    <Link
-                      href={serviceLinksByTitle.get(article.service) || '#'}
-                      className='inline-flex items-center rounded-full bg-[#00524e]/10 px-3 py-1 text-xs font-semibold text-[#00524e] hover:bg-[#00524e] hover:text-white transition-colors'
-                    >
-                      {article.service}
-                    </Link>
-                  </div>
-                ) : null}
-                <p className='text-gray-500 text-sm leading-relaxed mb-4 line-clamp-5 min-h-[4.5rem]'>
-                  {article.excerpt} {SiteInfo.mobileNumber}
-                </p>
-                <Link
-                  href={`/articles/${article.slug}`}
-                  className='mt-auto inline-block rounded-full border border-[#00524e] px-4 py-1 text-sm font-semibold text-[#00524e] transition-colors hover:bg-[#00524e] hover:text-white'
-                >
-                  التفاصيل
-                </Link>
-              </div>
-
-              {/* Card Footer */}
-              <div className='bg-[#00524e] py-3 flex justify-center items-center gap-8 text-white'>
-                <a
-                  href={`tel:${SiteInfo.mobileNumber}`}
-                  className='flex items-center gap-2 hover:text-amber-400 transition-colors'
-                >
-                  <FontAwesomeIcon icon={faPhone} className='h-5 w-5' />
-                  <span className='text-sm font-bold'>اتصال</span>
-                </a>
-                <div className='w-[1px] h-6 bg-gray-500'></div>
-                <a
-                  href={`https://wa.me/${SiteInfo.whatsappNumber}`}
-                  className='flex items-center gap-2 hover:text-green-400 transition-colors'
-                >
-                  <FontAwesomeIcon icon={faWhatsapp} className='h-5 w-5' />
-                  <span className='text-sm font-bold'>واتساب</span>
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </main>
-  )
+  return <BlogClient articles={allArticles} />
 }

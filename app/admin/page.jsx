@@ -57,7 +57,7 @@ export default async function AdminDashboard() {
           <p className="text-4xl font-bold text-[#00524e]">{totalCount}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
-          <p className="text-sm text-gray-500 mb-1">مقالات قاعدة البيانات</p>
+          <p className="text-sm text-gray-500 mb-1">المقالات الجديدة</p>
           <p className="text-4xl font-bold text-[#00524e]">{dbRows.length}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 col-span-2 sm:col-span-1">
@@ -131,7 +131,7 @@ export default async function AdminDashboard() {
                     <td className="px-5 py-3">
                       {post.source === 'db' ? (
                         <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                          قاعدة البيانات
+                          جديد
                         </span>
                       ) : (
                         <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">

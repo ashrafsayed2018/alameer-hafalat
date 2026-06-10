@@ -65,9 +65,57 @@ const sanitizeHtmlLite = (html = '') => {
   return out
 }
 
+const generateSlug = (title = '') =>
+  title
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^؀-ۿa-zA-Z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+
 const getArticles = async () => {
-  const { articles } = await import('../../articles.js')
-  return articles
+  const { articles: staticArticles } = await import('../../articles.js')
+
+  try {
+    const { createClient } = await import('../../../lib/supabase/server')
+    const supabase = await createClient()
+    const { data: dbPosts } = await supabase
+      .from('posts')
+      .select('id, title, slug, excerpt, content, image_url, post_date, created_at')
+      .order('created_at', { ascending: false })
+
+    if (dbPosts && dbPosts.length > 0) {
+      // Backfill missing slugs in memory and persist to DB
+      const updates = dbPosts.filter((p) => !p.slug)
+      if (updates.length > 0) {
+        await Promise.all(
+          updates.map((p) =>
+            supabase
+              .from('posts')
+              .update({ slug: generateSlug(p.title) })
+              .eq('id', p.id)
+          )
+        )
+        // Apply generated slugs to in-memory objects
+        updates.forEach((p) => { p.slug = generateSlug(p.title) })
+      }
+
+      const mapped = dbPosts.map((p) => ({
+        slug: p.slug,
+        id: p.id,
+        title: p.title,
+        excerpt: p.excerpt,
+        content: p.content,
+        image: p.image_url || '',
+        created_at: p.post_date || p.created_at,
+      }))
+      return [...mapped, ...staticArticles]
+    }
+  } catch (e) {
+    // fall through to static articles
+  }
+
+  return staticArticles
 }
 
 const normalizeSlug = (value = '') => {
@@ -189,9 +237,10 @@ export default async function ArticlePage({ params }) {
 
   try {
     const articles = await getArticles()
+    // Match by slug first, then fall back to id (UUID)
     article = articles.find(
       (a) => canonicalizeSlug(a.slug) === canonicalizeSlug(decodedSlug),
-    )
+    ) || articles.find((a) => a.id === decodedSlug)
   } catch (error) {
     console.error('Error loading articles:', error)
     return <div>Article could not be loaded.</div>
@@ -203,11 +252,8 @@ export default async function ArticlePage({ params }) {
 
   const canonicalSlug = normalizeSlug(article.slug)
 
-  if (canonicalizeSlug(decodedSlug) !== canonicalizeSlug(canonicalSlug)) {
-    redirect(`/articles/${encodeURIComponent(canonicalSlug)}`)
-  }
-
-  if (decodedSlug !== canonicalSlug) {
+  // If accessed via UUID, redirect to the real slug URL
+  if (article.slug && decodedSlug !== canonicalSlug) {
     redirect(`/articles/${encodeURIComponent(canonicalSlug)}`)
   }
 

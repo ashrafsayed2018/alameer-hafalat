@@ -97,3 +97,32 @@ CREATE POLICY "Auth users can delete post images"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (bucket_id = 'post-images');
+
+
+-- ============================================
+-- Gallery Storage Bucket
+-- ============================================
+
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'gallery',
+  'gallery',
+  true,
+  10485760, -- 10MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Public read gallery"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'gallery');
+
+CREATE POLICY "Auth users can upload gallery"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'gallery');
+
+CREATE POLICY "Auth users can delete gallery"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'gallery');

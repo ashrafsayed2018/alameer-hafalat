@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
+import GalleryPicker from './GalleryPicker'
 
 function generateSlug(title) {
   return title
@@ -25,6 +26,8 @@ export default function PostForm({ post }) {
   )
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(post?.image_url ?? null)
+  const [galleryImageUrl, setGalleryImageUrl] = useState(null)
+  const [showPicker, setShowPicker] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -41,7 +44,7 @@ export default function PostForm({ post }) {
     setError('')
 
     const supabase = createClient()
-    let imageUrl = post?.image_url ?? null
+    let imageUrl = galleryImageUrl ?? post?.image_url ?? null
 
     if (imageFile) {
       const ext = imageFile.name.split('.').pop()
@@ -162,7 +165,19 @@ export default function PostForm({ post }) {
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">صورة المقال</label>
+        <div className="flex items-center justify-between mb-1">
+          <label className="block text-sm font-medium text-gray-700">صورة المقال</label>
+          <button
+            type="button"
+            onClick={() => setShowPicker(true)}
+            className="flex items-center gap-1.5 text-sm text-[#00524e] font-medium hover:underline"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            اختر من المعرض
+          </button>
+        </div>
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#00524e] transition-colors">
           {imagePreview ? (
             <div className="relative">
@@ -173,7 +188,7 @@ export default function PostForm({ post }) {
               />
               <button
                 type="button"
-                onClick={() => { setImageFile(null); setImagePreview(null) }}
+                onClick={() => { setImageFile(null); setImagePreview(null); setGalleryImageUrl(null) }}
                 className="absolute top-2 left-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition"
               >
                 ×
@@ -184,30 +199,34 @@ export default function PostForm({ post }) {
               <svg className="w-10 h-10 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p className="text-sm text-gray-500">انقر لاختيار صورة أو اسحب وأفلت</p>
+              <p className="text-sm text-gray-500">انقر لرفع صورة جديدة أو اختر من المعرض</p>
               <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP حتى 5MB</p>
             </div>
           )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className={imagePreview ? 'hidden' : 'absolute inset-0 w-full h-full opacity-0 cursor-pointer'}
-            style={imagePreview ? {} : { position: 'absolute', inset: 0 }}
-          />
           {!imagePreview && (
-            <label className="cursor-pointer">
+            <label className="cursor-pointer mt-2 inline-block">
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 className="sr-only"
               />
-              <span className="text-[#00524e] text-sm font-medium hover:underline">اختر صورة</span>
+              <span className="text-[#00524e] text-sm font-medium hover:underline">رفع صورة</span>
             </label>
           )}
         </div>
       </div>
+
+      {showPicker && (
+        <GalleryPicker
+          onSelect={(url) => {
+            setGalleryImageUrl(url)
+            setImageFile(null)
+            setImagePreview(url)
+          }}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">

@@ -44,7 +44,7 @@ export default function GalleryPicker({ onSelect, onClose }) {
     for (const file of files) {
       const ext = file.name.split('.').pop()
       const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { error } = await supabase.storage.from('gallery').upload(name, file)
+      const { error } = await supabase.storage.from('gallery').upload(name, file, { contentType: file.type, upsert: false })
       if (!error) {
         const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(name)
         uploaded.push({ name, url: publicUrl })

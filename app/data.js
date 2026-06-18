@@ -39,6 +39,11 @@ export const NavLinks = [
     name: 'المدونة',
     url: '/blog',
   },
+  {
+    id: 7,
+    name: 'مناطق الخدمة',
+    url: '/areas',
+  },
 ]
 export const SiteInfo = {
   title: 'الأمير للحفلات لتأجير مستلزمات المناسبات بالكويت 96650623',

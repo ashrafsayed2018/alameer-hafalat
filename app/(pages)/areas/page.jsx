@@ -14,10 +14,10 @@ export const metadata = {
 }
 
 const govColors = {
-  capital: { bg: 'bg-[#00524e]', light: 'bg-[#00524e]/10', text: 'text-[#00524e]', border: 'border-[#00524e]/20' },
-  hawalli: { bg: 'bg-[#1a6b5e]', light: 'bg-[#1a6b5e]/10', text: 'text-[#1a6b5e]', border: 'border-[#1a6b5e]/20' },
-  mubarak: { bg: 'bg-[#2d7a5f]', light: 'bg-[#2d7a5f]/10', text: 'text-[#2d7a5f]', border: 'border-[#2d7a5f]/20' },
-  ahmadi: { bg: 'bg-[#07453d]', light: 'bg-[#07453d]/10', text: 'text-[#07453d]', border: 'border-[#07453d]/20' },
+  capital: { bg: 'bg-[#00524e]', light: 'bg-[#00524e]/10', text: 'text-[#00524e]', border: 'border-[#00524e]/20', hoverBg: 'hover:bg-[#00524e]' },
+  hawalli: { bg: 'bg-[#1a6b5e]', light: 'bg-[#1a6b5e]/10', text: 'text-[#1a6b5e]', border: 'border-[#1a6b5e]/20', hoverBg: 'hover:bg-[#1a6b5e]' },
+  mubarak: { bg: 'bg-[#2d7a5f]', light: 'bg-[#2d7a5f]/10', text: 'text-[#2d7a5f]', border: 'border-[#2d7a5f]/20', hoverBg: 'hover:bg-[#2d7a5f]' },
+  ahmadi: { bg: 'bg-[#07453d]', light: 'bg-[#07453d]/10', text: 'text-[#07453d]', border: 'border-[#07453d]/20', hoverBg: 'hover:bg-[#07453d]' },
 }
 
 export default function AreasPage() {
@@ -68,7 +68,7 @@ export default function AreasPage() {
                       <Link
                         key={area.slug}
                         href={`/areas/${encodeURIComponent(area.slug)}`}
-                        className={`group flex items-center gap-2 rounded-2xl border ${colors.border} ${colors.light} px-4 py-3 text-sm font-semibold ${colors.text} transition-all hover:${colors.bg} hover:text-white hover:shadow-md`}
+                        className={`group flex items-center gap-2 rounded-2xl border ${colors.border} ${colors.light} px-4 py-3 text-sm font-semibold ${colors.text} transition-all ${colors.hoverBg} hover:text-white hover:shadow-md`}
                       >
                         <svg className="w-3.5 h-3.5 shrink-0 opacity-60 group-hover:opacity-100" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />

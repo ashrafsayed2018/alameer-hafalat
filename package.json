@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "fast": "next dev --turbo",
-    "build": "next build",
+    "build": "cp -r node_modules/tinymce public/tinymce && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -17,6 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.1",
+    "@tinymce/tinymce-react": "^6.3.0",
     "framer-motion": "^11.2.6",
     "isomorphic-dompurify": "^2.36.0",
     "next": "^16.2.3",
@@ -24,7 +25,8 @@
     "react-dom": "^18",
     "react-router-dom": "^6.23.1",
     "react-toastify": "^10.0.5",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "tinymce": "^8.6.0"
   },
   "devDependencies": {
     "eslint": "^9.39.4",

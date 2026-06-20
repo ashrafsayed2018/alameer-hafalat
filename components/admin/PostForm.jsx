@@ -1,9 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import GalleryPicker from './GalleryPicker'
+
+const RichEditor = dynamic(() => import('./RichEditor'), { ssr: false, loading: () => (
+  <div className="border border-gray-300 rounded-lg h-[450px] flex items-center justify-center text-gray-400 text-sm">جاري تحميل المحرر...</div>
+) })
 
 function generateSlug(title) {
   return title
@@ -184,15 +189,7 @@ export default function PostForm({ post }) {
       {/* Content */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">محتوى المقال <span className="text-red-500">*</span></label>
-        <textarea
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          required
-          rows={12}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#00524e] text-right resize-y font-mono text-sm"
-          placeholder="اكتب محتوى المقال هنا... يمكنك استخدام HTML"
-        />
-        <p className="text-xs text-gray-400 mt-1">يمكنك استخدام HTML لتنسيق المحتوى</p>
+        <RichEditor value={content} onChange={setContent} />
       </div>
 
       {/* Post Date */}

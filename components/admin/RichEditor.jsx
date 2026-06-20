@@ -8,7 +8,7 @@ export default function RichEditor({ value, onChange }) {
 
   return (
     <Editor
-      tinymceScriptSrc="/tinymce/tinymce.min.js"
+      apiKey="ccgla7ohunwe2tytetrl8zns3ccb529r88v7pi8g194gvdar"
       onInit={(evt, editor) => (editorRef.current = editor)}
       value={value}
       onEditorChange={(newValue) => onChange(newValue)}
@@ -17,18 +17,8 @@ export default function RichEditor({ value, onChange }) {
         menubar: false,
         directionality: 'rtl',
         language: 'ar',
-        language_url: '/tinymce/langs/ar.js',
-        plugins: [
-          'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
-          'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-          'insertdatetime', 'media', 'table', 'preview', 'wordcount',
-        ],
-        toolbar:
-          'undo redo | blocks | ' +
-          'bold italic underline strikethrough | forecolor backcolor | ' +
-          'alignright aligncenter alignleft alignjustify | ' +
-          'bullist numlist outdent indent | ' +
-          'link image table | removeformat code fullscreen',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
         content_style: `
           body {
             font-family: 'Tajawal', Tahoma, Arial, sans-serif;
@@ -40,8 +30,6 @@ export default function RichEditor({ value, onChange }) {
             line-height: 1.8;
           }
         `,
-        skin: 'oxide',
-        content_css: 'default',
         branding: false,
         promotion: false,
         resize: true,

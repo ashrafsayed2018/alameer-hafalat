@@ -39,7 +39,11 @@ export default async function AdminDashboard() {
     deleteId: null,
   }))
 
-  const allPosts = [...dbRows, ...staticRows]
+  const allPosts = [...dbRows, ...staticRows].sort((a, b) => {
+    const da = a.date ? new Date(a.date).getTime() : 0
+    const db2 = b.date ? new Date(b.date).getTime() : 0
+    return db2 - da
+  })
   const totalCount = allPosts.length
 
   return (

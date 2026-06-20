@@ -11,7 +11,7 @@ export default async function PostsPage() {
 
   const { data: posts } = await supabase
     .from('posts')
-    .select('id, title, slug, image_url, excerpt, post_date, created_at')
+    .select('id, title, slug, image_url, excerpt, post_date, created_at, categories(name)')
     .order('created_at', { ascending: false })
 
   return (
@@ -43,6 +43,7 @@ export default async function PostsPage() {
                   <th className="text-right px-5 py-3 text-gray-500 font-medium">الصورة</th>
                   <th className="text-right px-5 py-3 text-gray-500 font-medium">العنوان</th>
                   <th className="text-right px-5 py-3 text-gray-500 font-medium hidden md:table-cell">المقتطف</th>
+                  <th className="text-right px-5 py-3 text-gray-500 font-medium hidden lg:table-cell">التصنيف</th>
                   <th className="text-right px-5 py-3 text-gray-500 font-medium">التاريخ</th>
                   <th className="text-right px-5 py-3 text-gray-500 font-medium">الإجراءات</th>
                 </tr>
@@ -88,6 +89,15 @@ export default async function PostsPage() {
                     </td>
                     <td className="px-5 py-3 text-gray-500 hidden md:table-cell max-w-[220px]">
                       <span className="line-clamp-1">{post.excerpt}</span>
+                    </td>
+                    <td className="px-5 py-3 hidden lg:table-cell">
+                      {post.categories?.name ? (
+                        <span className="inline-flex items-center rounded-full bg-[#00524e]/10 px-3 py-1 text-xs font-semibold text-[#00524e]">
+                          {post.categories.name}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
                     </td>
                     <td className="px-5 py-3 text-gray-500 whitespace-nowrap">
                       {post.post_date

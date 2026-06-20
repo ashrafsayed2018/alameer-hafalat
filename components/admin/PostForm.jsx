@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import GalleryPicker from './GalleryPicker'
@@ -24,12 +24,22 @@ export default function PostForm({ post }) {
   const [postDate, setPostDate] = useState(
     post?.post_date ? post.post_date.split('T')[0] : new Date().toISOString().split('T')[0]
   )
+  const [categoryId, setCategoryId] = useState(post?.category_id ?? '')
+  const [categories, setCategories] = useState([])
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(post?.image_url ?? null)
   const [galleryImageUrl, setGalleryImageUrl] = useState(null)
   const [showPicker, setShowPicker] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    createClient()
+      .from('categories')
+      .select('id, name')
+      .order('name')
+      .then(({ data }) => setCategories(data || []))
+  }, [])
 
   function handleImageChange(e) {
     const file = e.target.files[0]
@@ -80,6 +90,7 @@ export default function PostForm({ post }) {
       content,
       post_date: postDate,
       image_url: imageUrl,
+      category_id: categoryId || null,
     }
 
     if (isEdit) {
@@ -122,6 +133,21 @@ export default function PostForm({ post }) {
           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#00524e] text-right"
           placeholder="عنوان المقال"
         />
+      </div>
+
+      {/* Category */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">التصنيف</label>
+        <select
+          value={categoryId}
+          onChange={e => setCategoryId(e.target.value)}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#00524e] text-right bg-white"
+        >
+          <option value="">— بدون تصنيف —</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
       </div>
 
       {/* Excerpt */}

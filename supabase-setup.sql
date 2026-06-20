@@ -100,6 +100,57 @@ CREATE POLICY "Auth users can delete post images"
 
 
 -- ============================================
+-- Categories Table
+-- ============================================
+
+-- 1. Create categories table
+CREATE TABLE IF NOT EXISTS public.categories (
+  id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name       TEXT NOT NULL UNIQUE,
+  slug       TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. RLS for categories
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read categories (used on public blog)
+CREATE POLICY "Public read categories"
+  ON public.categories FOR SELECT
+  USING (true);
+
+-- Only authenticated users can manage categories
+CREATE POLICY "Auth users can insert categories"
+  ON public.categories FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Auth users can update categories"
+  ON public.categories FOR UPDATE
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
+
+CREATE POLICY "Auth users can delete categories"
+  ON public.categories FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- 3. Add category_id FK to posts (run this if posts table already exists)
+ALTER TABLE public.posts
+  ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL;
+
+-- 4. Seed some default categories
+INSERT INTO public.categories (name, slug) VALUES
+  ('مناسبات', 'مناسبات'),
+  ('أفراح', 'أفراح'),
+  ('حفلات', 'حفلات'),
+  ('تجهيزات', 'تجهيزات'),
+  ('نصائح', 'نصائح')
+ON CONFLICT (slug) DO NOTHING;
+
+
+-- ============================================
 -- Gallery Storage Bucket
 -- ============================================
 

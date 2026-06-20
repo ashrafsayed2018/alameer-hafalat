@@ -26,6 +26,8 @@ export default function PostForm({ post }) {
   )
   const [categoryId, setCategoryId] = useState(post?.category_id ?? '')
   const [categories, setCategories] = useState([])
+  const [selectedTagIds, setSelectedTagIds] = useState(post?.post_tags?.map(pt => pt.tag_id) ?? [])
+  const [tags, setTags] = useState([])
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(post?.image_url ?? null)
   const [galleryImageUrl, setGalleryImageUrl] = useState(null)
@@ -34,12 +36,18 @@ export default function PostForm({ post }) {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    createClient()
-      .from('categories')
-      .select('id, name')
-      .order('name')
+    const supabase = createClient()
+    supabase.from('categories').select('id, name').order('name')
       .then(({ data }) => setCategories(data || []))
+    supabase.from('tags').select('id, name').order('name')
+      .then(({ data }) => setTags(data || []))
   }, [])
+
+  function toggleTag(id) {
+    setSelectedTagIds(prev =>
+      prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]
+    )
+  }
 
   function handleImageChange(e) {
     const file = e.target.files[0]
@@ -93,6 +101,8 @@ export default function PostForm({ post }) {
       category_id: categoryId || null,
     }
 
+    let postId = post?.id
+
     if (isEdit) {
       const { error: updateError } = await supabase
         .from('posts')
@@ -105,15 +115,26 @@ export default function PostForm({ post }) {
         return
       }
     } else {
-      const { error: insertError } = await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from('posts')
         .insert([payload])
+        .select('id')
+        .single()
 
       if (insertError) {
         setError(insertError.message)
         setLoading(false)
         return
       }
+      postId = inserted.id
+    }
+
+    // Sync post_tags: delete old then insert new
+    await supabase.from('post_tags').delete().eq('post_id', postId)
+    if (selectedTagIds.length > 0) {
+      await supabase.from('post_tags').insert(
+        selectedTagIds.map(tag_id => ({ post_id: postId, tag_id }))
+      )
     }
 
     router.push('/admin/posts')
@@ -148,6 +169,39 @@ export default function PostForm({ post }) {
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
+      </div>
+
+      {/* Tags */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          الوسوم
+          {selectedTagIds.length > 0 && (
+            <span className="mr-2 text-xs text-[#00524e] font-normal">({selectedTagIds.length} محدد)</span>
+          )}
+        </label>
+        {tags.length === 0 ? (
+          <p className="text-sm text-gray-400">جاري التحميل...</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {tags.map(tag => {
+              const active = selectedTagIds.includes(tag.id)
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => toggleTag(tag.id)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                    active
+                      ? 'bg-[#00524e] text-white border-[#00524e]'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-[#00524e] hover:text-[#00524e]'
+                  }`}
+                >
+                  #{tag.name}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Excerpt */}

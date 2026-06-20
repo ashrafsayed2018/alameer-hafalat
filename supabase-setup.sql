@@ -160,6 +160,73 @@ ON CONFLICT (slug) DO NOTHING;
 
 
 -- ============================================
+-- Tags & Post-Tags (many-to-many)
+-- ============================================
+
+-- 1. Tags table
+CREATE TABLE IF NOT EXISTS public.tags (
+  id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name       TEXT NOT NULL UNIQUE,
+  slug       TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.tags ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read tags"
+  ON public.tags FOR SELECT USING (true);
+
+CREATE POLICY "Auth users can insert tags"
+  ON public.tags FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Auth users can update tags"
+  ON public.tags FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Auth users can delete tags"
+  ON public.tags FOR DELETE TO authenticated USING (true);
+
+-- 2. Post-Tags junction table
+CREATE TABLE IF NOT EXISTS public.post_tags (
+  post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
+  tag_id  UUID NOT NULL REFERENCES public.tags(id) ON DELETE CASCADE,
+  PRIMARY KEY (post_id, tag_id)
+);
+
+ALTER TABLE public.post_tags ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read post_tags"
+  ON public.post_tags FOR SELECT USING (true);
+
+CREATE POLICY "Auth users can insert post_tags"
+  ON public.post_tags FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Auth users can delete post_tags"
+  ON public.post_tags FOR DELETE TO authenticated USING (true);
+
+-- 3. Seed tags (matches tags.js)
+INSERT INTO public.tags (name, slug) VALUES
+  ('تأجير مكيفات',       'تأجير-مكيفات'),
+  ('تأجير خيام',         'تأجير-خيام'),
+  ('كراسي وطاولات',      'كراسي-وطاولات'),
+  ('ضيافة نسائي',        'ضيافة-نسائي'),
+  ('ضيافة رجالي',        'ضيافة-رجالي'),
+  ('تأجير دفايات',       'تأجير-دفايات'),
+  ('كنب مطروق',          'كنب-مطروق'),
+  ('كنب أمريكي',         'كنب-أمريكي'),
+  ('فاليه باركن',        'فاليه-باركن'),
+  ('كراسي VIP',          'كراسي-vip'),
+  ('كراسي عزاء',         'كراسي-عزاء'),
+  ('زينة أعراس',         'زينة-أعراس'),
+  ('كراسي شفافة',        'كراسي-شفافة'),
+  ('تفتيش تليفونات',     'تفتيش-تليفونات'),
+  ('تساكير وحواجز',      'تساكير-وحواجز'),
+  ('تأجير كوش',          'تأجير-كوش'),
+  ('كراسي أطفال',        'كراسي-أطفال'),
+  ('تأجير بنشات',        'تأجير-بنشات')
+ON CONFLICT (slug) DO NOTHING;
+
+
+-- ============================================
 -- Gallery Storage Bucket
 -- ============================================
 

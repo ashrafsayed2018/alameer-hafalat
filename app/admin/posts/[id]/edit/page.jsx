@@ -12,7 +12,7 @@ export default async function EditPostPage({ params }) {
   const { id } = await params
   const { data: post } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, post_tags(tag_id)')
     .eq('id', id)
     .single()
 

@@ -27,18 +27,33 @@
 
   .article-content {
     @apply text-gray-800 leading-8;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content h2 {
     @apply mt-10 mb-4 text-2xl md:text-3xl font-extrabold text-[#00524e] leading-snug;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content h3 {
     @apply mt-8 mb-3 text-xl md:text-2xl font-bold text-[#00524e] leading-snug;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .article-content h4,
+  .article-content h5,
+  .article-content h6 {
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content p {
     @apply my-4;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content a {
@@ -47,18 +62,26 @@
 
   .article-content ul {
     @apply my-4 list-disc pr-6 space-y-2;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content ol {
     @apply my-4 list-decimal pr-6 space-y-2;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content li {
     @apply leading-8;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content blockquote {
     @apply my-6 rounded-2xl bg-amber-50 border border-amber-100 p-5 text-gray-700;
+    direction: rtl;
+    text-align: right;
   }
 
   .article-content hr {
@@ -67,5 +90,11 @@
 
   .article-content img {
     @apply my-6 rounded-2xl;
+  }
+
+  .article-content table {
+    direction: rtl;
+    text-align: right;
+    width: 100%;
   }
 }

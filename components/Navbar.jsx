@@ -45,7 +45,7 @@ function Navbar() {
 
   return (
     <section
-      className="themeBgColor hoverBgColor h-14 fixed inset-0 z-40"
+      className="themeBgColor hoverBgColor h-14 fixed top-0 left-0 right-0 z-40"
       id="navbar"
     >
       <div className="themeBgColor hoverBgColor grid grid-cols-3 items-center h-full px-4">

@@ -7,7 +7,6 @@ import { AppProvider } from '../context'
 import { SiteInfo } from './data'
 import './globals.css'
 import Loading from './loading'
-import FloatingContactWrapper from '../components/FloatingContactWrapper'
 
 const Navbar = dynamic(() => import('../components/Navbar'), { suspense: true })
 const MenuDropDown = dynamic(() => import('../components/dropdowns/MenuDropDown'), { suspense: true })
@@ -76,7 +75,6 @@ export default async function RootLayout({ children }) {
               <main className="min-h-screen">{children}</main>
               <Footer />
               <FixedCall />
-              <FloatingContactWrapper />
             </Suspense>
           </AppProvider>
         )}

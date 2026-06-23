@@ -7,7 +7,7 @@ import { AppProvider } from '../context'
 import { SiteInfo } from './data'
 import './globals.css'
 import Loading from './loading'
-import FloatingContact from '../components/FloatingContact'
+const FloatingContact = dynamic(() => import('../components/FloatingContact'), { ssr: false })
 
 const Navbar = dynamic(() => import('../components/Navbar'), { suspense: true })
 const MenuDropDown = dynamic(() => import('../components/dropdowns/MenuDropDown'), { suspense: true })

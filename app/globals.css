@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 @layer components {
   .themeBgColor {
     @apply bg-gradient-to-r from-[#00524e] to-[#07453d];

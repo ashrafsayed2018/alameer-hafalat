@@ -22,7 +22,7 @@ export default async function BlogPage() {
     title: p.title,
     slug: p.slug || p.id,
     excerpt: p.excerpt || '',
-    image: p.image_url || '/images/default.jpg',
+    image: p.image_url || '/images/001.jpeg',
     created_at: p.post_date || p.created_at,
     service: null,
   }))

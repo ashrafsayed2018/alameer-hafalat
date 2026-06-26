@@ -76,6 +76,7 @@ export default function BlogClient({ articles }) {
                 alt={article.title}
                 className='w-full'
                 style={{ display: 'block' }}
+                onError={(e) => { e.currentTarget.src = '/images/001.jpeg' }}
               />
 
               {/* Content */}

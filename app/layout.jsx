@@ -14,7 +14,7 @@ const MapDropDown = dynamic(() => import('../components/dropdowns/MapDropDown'),
 const ShareDropDown = dynamic(() => import('../components/dropdowns/ShareDropDown'), { suspense: true })
 const ContactDropDown = dynamic(() => import('../components/dropdowns/ContactDropDown'), { suspense: true })
 const Footer = dynamic(() => import('../components/Footer'), { suspense: true })
-const FixedCall = dynamic(() => import('../components/FixedCall'), { suspense: true })
+const FloatingContactWrapper = dynamic(() => import('../components/FloatingContactWrapper'), { suspense: true })
 
 const openSans = Open_Sans({ subsets: ['latin'] })
 
@@ -74,7 +74,7 @@ export default async function RootLayout({ children }) {
               <Navbar />
               <main className="min-h-screen">{children}</main>
               <Footer />
-              <FixedCall />
+              <FloatingContactWrapper />
             </Suspense>
           </AppProvider>
         )}
